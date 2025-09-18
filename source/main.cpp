@@ -22,9 +22,12 @@ const float PI_DIV_32 = PI / 32;
 int initWindow(void);
 static void mouseCallback(GLFWwindow *, int, int, int);
 static void scrollCallback(GLFWwindow *, double, double);
+static void refreshCallback(GLFWwindow *);
 
-const GLuint windowWidth = 1920, windowHeight = 1080;
+GLint windowWidth = 1280, windowHeight = 720;
 GLFWwindow *window;
+
+glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
 int currSelected = 0;
 
@@ -45,9 +48,6 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
-
-
-    glm::mat4 projectionMatrix = glm::perspective(45.0f, 16.0f / 9.0f, 0.1f, 100.0f);
 
     // object initialization
     gridObject grid;
@@ -96,13 +96,18 @@ int main()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
+        // ImGui::ShowDemoWindow();
 
-        static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
-        ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
-        if (ImGui::ColorPicker4("BG Color", (float*)&color, flags)) {
-            glClearColor(color.x, color.y, color.z, color.w);
+        // ImGui::Begin("Model Viewer");
+        if (ImGui::CollapsingHeader("Layout")) {
+            static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
+            ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
+            if (ImGui::ColorPicker4("BG Color", (float*)&color, flags)) {
+                glClearColor(color.x, color.y, color.z, color.w);
+            }
         }
+
+
 
         // Timing (modified to use deltaTime)
         double currentTime = glfwGetTime();
@@ -256,13 +261,15 @@ int initWindow()
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE); // FOR MAC
 
-    window = glfwCreateWindow(windowWidth, windowHeight, "Mocevic, Sandro(13761410)", NULL, NULL);
+    window = glfwCreateWindow(windowWidth, windowHeight, "Model Viewer", NULL, NULL);
     if (window == NULL)
     {
         fprintf(stderr, "Failed to open GLFW window.\n");
         glfwTerminate();
         return -1;
     }
+    glfwMaximizeWindow(window);
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
     glfwMakeContextCurrent(window);
 
     // Initialize GLEW
@@ -278,6 +285,7 @@ int initWindow()
     glfwSetCursorPos(window, windowWidth / 2, windowHeight / 2);
     glfwSetMouseButtonCallback(window, mouseCallback);
     glfwSetScrollCallback(window, scrollCallback);
+    glfwSetWindowRefreshCallback(window, refreshCallback);
 
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
@@ -306,3 +314,9 @@ static void scrollCallback(GLFWwindow *window, double x, double y)
     if (coords->x < 2) { coords->x = 2; }
 }
 
+static void refreshCallback(GLFWwindow *window)
+{
+    glfwGetWindowSize(window, &windowWidth, &windowHeight);
+    glViewport(0, 0, windowWidth, windowHeight);
+    projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+}
