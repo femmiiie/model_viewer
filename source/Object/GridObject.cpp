@@ -1,14 +1,14 @@
-#include "gridObject.hpp"
+#include "GridObject.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
 
-gridObject::gridObject() { // Assign current value of nextId to id and increment it
+GridObject::GridObject()
+{
     
     // Initialize the model matrix
     modelMatrix = glm::mat4(1.0f);
 
-    // Generate and bind VAO, VBO, and EBO
     // Generate and bind VAO, VBO, and EBO
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);
@@ -16,7 +16,8 @@ gridObject::gridObject() { // Assign current value of nextId to id and increment
 
     glBindVertexArray(VAO);
 
-    std::vector<GLfloat> vertices = {
+    std::vector<GLfloat> vertices =
+    {
         //edges
         -5.0f, 0.0f, -5.0f,   1.0f, 1.0f, 1.0f,
         5.0f, 0.0f, -5.0f,   1.0f, 1.0f, 1.0f,
@@ -145,7 +146,8 @@ gridObject::gridObject() { // Assign current value of nextId to id and increment
     shaderProgram = LoadShaders("gridVertexShader.glsl", "gridFragmentShader.glsl");
 }
 
-gridObject::~gridObject() {
+GridObject::~GridObject()
+{
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
@@ -153,7 +155,8 @@ gridObject::~gridObject() {
     
 }
 
-void gridObject::draw(const glm::mat4& view, const glm::mat4& projection) {
+void GridObject::draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) 
+{
     glUseProgram(shaderProgram);
     
     glm::mat4 MVP = projection * view * modelMatrix;

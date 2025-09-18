@@ -8,15 +8,8 @@
 #include "structs.h"
 
 
-// Initialize static member
-int meshObject::nextId = 1;
-std::map<int, meshObject*> meshObject::meshObjectMap;
-
-meshObject::meshObject(std::string filepath) : id(nextId++) // Assign current value of nextId to id and increment it
+MeshObject::MeshObject(std::string filepath, std::vector<Renderer::Light>& scene_lights)
 { 
-    // Add this object to the map
-    meshObjectMap[id] = this;
-
     // Initialize the model matrix
     modelMatrix = glm::mat4(1.0f);
 
@@ -84,21 +77,17 @@ meshObject::meshObject(std::string filepath) : id(nextId++) // Assign current va
 
     // Load and compile shaders
     shaderProgram = LoadShaders("meshVertexShader.glsl", "meshFragmentShader.glsl");
-    pickingShaderProgram = LoadShaders("pickingvertexShader.glsl", "pickingFragmentShader.glsl");
 }
 
-meshObject::~meshObject() 
+MeshObject::~MeshObject() 
 {
     glDeleteVertexArrays(1, &VAO);
     glDeleteBuffers(1, &VBO);
     glDeleteBuffers(1, &EBO);
     glDeleteProgram(shaderProgram);
-    
-    // Remove this object from the map
-    meshObjectMap.erase(id);
 }
 
-void meshObject::draw(const glm::mat4& view, const glm::mat4& projection, glm::mat4 transform, light light1, light light2, glm::vec3 camera, int selected) 
+void MeshObject::draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) 
 {
     glUseProgram(shaderProgram);
 
@@ -113,85 +102,37 @@ void meshObject::draw(const glm::mat4& view, const glm::mat4& projection, glm::m
     glUniformMatrix4fv(PID, 1, GL_FALSE, glm::value_ptr(projection));
     
     GLuint light1PosID = glGetUniformLocation(shaderProgram, "light1pos");
-    glUniform3fv(light1PosID, 1, glm::value_ptr(light1.pos));
+    // glUniform3fv(light1PosID, 1, glm::value_ptr(light1.pos));
 
     GLuint light1ColorID = glGetUniformLocation(shaderProgram, "light1color");
-    glUniform3fv(light1ColorID, 1, glm::value_ptr(light1.color));
+    // glUniform3fv(light1ColorID, 1, glm::value_ptr(light1.color));
 
     GLuint light2PosID = glGetUniformLocation(shaderProgram, "light2pos");
-    glUniform3fv(light2PosID, 1, glm::value_ptr(light2.pos));
+    // glUniform3fv(light2PosID, 1, glm::value_ptr(light2.pos));
 
     GLuint light2ColorID = glGetUniformLocation(shaderProgram, "light2color");
-    glUniform3fv(light2ColorID, 1, glm::value_ptr(light2.color));
+    // glUniform3fv(light2ColorID, 1, glm::value_ptr(light2.color));
 
     GLuint cameraID = glGetUniformLocation(shaderProgram, "camerapos");
     glUniform3fv(cameraID, 1, glm::value_ptr(camera));
 
-    bool is_selected = (selected == getId());
+    // bool is_selected = (selected == getId());
     GLuint selectedID = glGetUniformLocation(shaderProgram, "is_selected");
-    glUniform1i(selectedID, is_selected);
+    // glUniform1i(selectedID, is_selected);
 
     // Draw the object
     glBindVertexArray(VAO);
     glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
     glBindVertexArray(0);
     
-    for (meshObject* child : this->children)
+    for (Object* child : this->children)
     {
-        child->draw(view, projection, M, light1, light2, camera, selected);
+        child->draw(view, projection, M, camera);
     }
 }
 
-void meshObject::translate(const glm::vec3& translation) 
-{
-    // Apply translation to the model matrix
-    modelMatrix = glm::translate(modelMatrix, translation);
-}
 
-void meshObject::rotate(float angle, const glm::vec3& axis) 
-{
-    // Apply rotation to the model matrix
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(angle), axis);
-}
 
-void meshObject::drawPicking(const glm::mat4& view, const glm::mat4& projection, glm::mat4 transform) 
-{
-    glUseProgram(pickingShaderProgram); // Use the picking shader
 
-    glm::mat4 M = transform * modelMatrix;
 
-    glm::mat4 MVP = projection * view * M;
-    GLuint matrixID = glGetUniformLocation(pickingShaderProgram, "MVP");
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, glm::value_ptr(MVP));
 
-    GLuint meshID = glGetUniformLocation(pickingShaderProgram, "objectID");
-    glUniform1f(meshID, getId());
-
-    // Draw the object
-    glBindVertexArray(VAO);
-    glDrawElements(GL_TRIANGLES, numIndices, GL_UNSIGNED_INT, 0);
-    glBindVertexArray(0);
-    glUseProgram(0); // Unbind the shader program
-
-    for (meshObject* child : children)
-    {
-        child->drawPicking(view, projection, M);
-    }
-
-}
-
-meshObject* meshObject::getMeshObjectById(int id)
-{
-    // Look up the object by ID in the map
-    auto it = meshObjectMap.find(id);
-    if (it != meshObjectMap.end()) {
-        return it->second;
-    }
-    return nullptr; // Return nullptr if ID not found
-}
-
-glm::mat4 meshObject::getTransformation()
-{
-    if (!children.empty()) { return modelMatrix * children[0]->getTransformation(); }
-    return modelMatrix;
-}
