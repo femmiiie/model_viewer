@@ -4,8 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#include "meshObject.hpp"
-#include "gridObject.hpp"
+#include "MeshObject.h"
+#include "GridObject.h"
 #include "structs.h"
 #include "util.h"
 
@@ -26,6 +26,8 @@ static void refreshCallback(GLFWwindow *);
 
 GLint windowWidth = 1280, windowHeight = 720;
 GLFWwindow *window;
+
+Renderer renderer(window);
 
 glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
@@ -50,31 +52,31 @@ int main()
     ImGui_ImplOpenGL3_Init();
 
     // object initialization
-    gridObject grid;
+    // GridObject grid;
 
-    meshObject base("../objects/base.obj");
-    meshObject arm1("../objects/arm1.obj");
-    meshObject arm1j("../objects/arm1j.obj"); // joint to allow arm1 to rotate without impacting base
-    meshObject joint("../objects/joint.obj");
-    meshObject arm2("../objects/arm2.obj");
-    meshObject arm2j("../objects/arm2j.obj"); // joint to allow arm2 to rotate without impacting joint
+    // MeshObject base("../objects/base.obj");
+    // MeshObject arm1("../objects/arm1.obj");
+    // MeshObject arm1j("../objects/arm1j.obj"); // joint to allow arm1 to rotate without impacting base
+    // MeshObject joint("../objects/joint.obj");
+    // MeshObject arm2("../objects/arm2.obj");
+    // MeshObject arm2j("../objects/arm2j.obj"); // joint to allow arm2 to rotate without impacting joint
 
     // hierarchy ordering
-    base.children.push_back(&arm1j);
-    arm1j.children.push_back(&arm1);
-    arm1.children.push_back(&joint);
-    joint.children.push_back(&arm2j);
-    arm2j.children.push_back(&arm2);
+    // base.children.push_back(&arm1j);
+    // arm1j.children.push_back(&arm1);
+    // arm1.children.push_back(&joint);
+    // joint.children.push_back(&arm2j);
+    // arm2j.children.push_back(&arm2);
 
     // object intial placement
-    base.translate(glm::vec3(0.0f, 0.3f, 0.0f));
-    arm1.translate(glm::vec3(0.8f, 0.8f, 0.0f));
-    joint.translate(glm::vec3(1.3f, 0.0f, 0.0f));
-    arm2.translate(glm::vec3(0.56218f, 0.0f, 0.0f));
+    // base.translate(glm::vec3(0.0f, 0.3f, 0.0f));
+    // arm1.translate(glm::vec3(0.8f, 0.8f, 0.0f));
+    // joint.translate(glm::vec3(1.3f, 0.0f, 0.0f));
+    // arm2.translate(glm::vec3(0.56218f, 0.0f, 0.0f));
 
-    arm1.rotate(38.599f, glm::vec3(0.0f, 0.0f, 1.0f));
-    arm2j.rotate(-51.401, glm::vec3(0.0f, 0.0f, 1.0f));
-    arm2.rotate(90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
+    // arm1.rotate(38.599f, glm::vec3(0.0f, 0.0f, 1.0f));
+    // arm2j.rotate(-51.401, glm::vec3(0.0f, 0.0f, 1.0f));
+    // arm2.rotate(90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
     glm::vec3 view_coords(8, 0.75f, 1.25f);
 
@@ -88,9 +90,6 @@ int main()
 
     glfwSetWindowUserPointer(window, &view_coords);
 
-    double lastTime = glfwGetTime();
-    double sinceLast = 0;
-    int frames = 0;
     do
     {
         ImGui_ImplOpenGL3_NewFrame();
@@ -103,24 +102,13 @@ int main()
             static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
             ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
             if (ImGui::ColorPicker4("BG Color", (float*)&color, flags)) {
+                std::cout << "update" << std::endl;
                 glClearColor(color.x, color.y, color.z, color.w);
             }
         }
 
-
-
-        // Timing (modified to use deltaTime)
-        double currentTime = glfwGetTime();
-        double delta = currentTime - lastTime;
-        frames++;
-
-        sinceLast += delta;
-        if (sinceLast >= 1.000)
-        {
-            std::cout << frames/sinceLast << " fps" << std::endl;
-            frames = 0;
-            sinceLast = 0;
-        }
+        renderer.timeStep();
+ 
 
         if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
         {
@@ -220,20 +208,15 @@ int main()
         glm::vec3 pos = calc_pos(view_coords);
         glm::mat4 viewMatrix = calc_view_matrix(pos);
 
-        selection_check(window, currSelected, rotating, base, arm1, arm2);
+        // selection_check(window, currSelected, rotating, base, arm1, arm2);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         // DRAWING the SCENE
-        grid.draw(viewMatrix, projectionMatrix);
-        base.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), left_light, right_light, pos, currSelected);
+        // grid.draw(viewMatrix, projectionMatrix);
+        // base.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), left_light, right_light, pos, currSelected);
 
-        ImGui::Render();
-        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-        lastTime = currentTime;
-        glfwSwapBuffers(window);
-        glfwPollEvents();
+        renderer.display();
 
     } // Check if the ESC key was pressed or the window was closed
     while (glfwGetKey(window, GLFW_KEY_ESCAPE) != GLFW_PRESS && glfwWindowShouldClose(window) == 0);
