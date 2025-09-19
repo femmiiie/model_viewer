@@ -1,21 +1,25 @@
-#version 330 core
+#version 450 core
 
 in vec3 position;
 in vec3 normal;
 in vec3 eyevector;
 
-in vec3 light1dir;
-in vec3 light2dir;
 
-uniform vec3 light1pos;
-uniform vec3 light1color;
+struct Light
+{
+  vec4 position;
+  vec4 color;
+};
 
-uniform vec3 light2pos;
-uniform vec3 light2color;
+layout(std140, binding = 0) uniform Lights
+{
+    Light lights[128];
+};
 
+uniform int num_lights;
+
+uniform mat4 V;
 uniform vec3 camerapos;
-
-uniform bool is_selected;
 
 // Output color
 out vec4 color;
@@ -38,10 +42,8 @@ vec3 comp_light(vec3 lightpos, vec3 lightcolor, vec3 lightdir) {
 
 
 //ambient calculations
-    float amb_str = 0.1;
-    if (is_selected) { amb_str += 0.1; }
+    float amb_str = 0.0;
     vec3 ambient = amb_str * amb_color;
-
 
 //specular calculations
     vec3 e = normalize(eyevector);
@@ -55,13 +57,15 @@ vec3 comp_light(vec3 lightpos, vec3 lightcolor, vec3 lightdir) {
 
 void main() {
     // Set the fragment color
-    //TODO: P1bTask4 - Find a way to draw the selected part in a brighter color.
-    vec3 light1 = comp_light(light1pos, light1color, light1dir);
-    vec3 light2 = comp_light(light2pos, light2color, light2dir);
+    vec3 sum_of_lights = vec3(0.0, 0.0, 0.0);
 
-    color = vec4(clamp(light1 + light2, 0, 1), 1.0);
+    for (int i = 0; i < num_lights; i++)
+    {
+        // vec3 lightDirection = normalize(lights[i].position.xyz - position);
+        vec3 lightDirection = (V * lights[i].position).xyz + eyevector;
+        sum_of_lights += comp_light(lights[i].position.xyz, lights[i].color.xyz, lightDirection);
+    }
 
-    // color = vec4(clamp(normal, 0, 1), 1.0); 
-
+    color = vec4(clamp(sum_of_lights,0, 1), 1.0);
 }
 

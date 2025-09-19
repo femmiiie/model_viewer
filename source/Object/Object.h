@@ -7,15 +7,16 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
-#include <Renderer.h>
+#include "../Light.h"
+
 
 class Object
 {
 public:
-  Object();
-  ~Object();
+  Object(std::vector<Light>& lights);
+  virtual ~Object() = 0;
 
-  virtual void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
+  virtual void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) = 0;
 
   glm::mat4 getModelMatrix() { return modelMatrix; }
   void setModelMatrix(glm::mat4 m) { modelMatrix = m; }
@@ -33,7 +34,7 @@ protected:
   glm::mat4 modelMatrix;
   GLsizei numIndices;
 
-  std::vector<Renderer::Light>& scene_lights;
+  std::vector<Light>& scene_lights;
   std::vector<Object*> children;
 };
 

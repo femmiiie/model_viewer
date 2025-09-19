@@ -6,10 +6,10 @@
 class AxesObject : public Object
 {
 public:
-  AxesObject();
+  AxesObject(std::vector<Light>& scene_lights);
   ~AxesObject();
 
-  void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) override;
+  void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
 };
 
 #endif

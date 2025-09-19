@@ -4,10 +4,13 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#include "MeshObject.h"
-#include "GridObject.h"
-#include "structs.h"
-#include "util.h"
+#include "Renderer/Renderer.h"
+#include "Object/MeshObject.h"
+#include "Object/GridObject.h"
+
+#include <chrono>
+#include <thread>
+
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
@@ -27,9 +30,6 @@ static void refreshCallback(GLFWwindow *);
 GLint windowWidth = 1280, windowHeight = 720;
 GLFWwindow *window;
 
-Renderer renderer(window);
-
-glm::mat4 projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
 
 int currSelected = 0;
 
@@ -39,9 +39,8 @@ bool rotating = false;
 
 int main()
 {
+    if (initWindow() != 0) { return -1; }
 
-    if (initWindow() != 0)
-        return -1;
 
 
     IMGUI_CHECKVERSION();
@@ -50,6 +49,10 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
+
+    Renderer renderer(window);
+    renderer.setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
+    renderer.addMesh("../objects/base.obj");
 
     // object initialization
     // GridObject grid;
@@ -78,17 +81,12 @@ int main()
     // arm2j.rotate(-51.401, glm::vec3(0.0f, 0.0f, 1.0f));
     // arm2.rotate(90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    glm::vec3 view_coords(8, 0.75f, 1.25f);
+    // renderer.setCameraPosCAR({8.0f, 0.75f, 1.25f});
+    renderer.setCameraPosCAR({8.0f, 3.0f, 0.0f});
+    renderer.addLight({0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f});
+    renderer.addLight({0.0f, 3.0f, -5.0f}, {0.341f, 0.333f, 0.996f});
 
-    light left_light(
-        glm::vec3(0.0f, 3.0f, 5.0f),
-        glm::vec3(0.7f, 0.443137f, 0.703922f));
-
-    light right_light(
-        glm::vec3(0.0f, 3.0f, -5.0f),
-        glm::vec3(0.341176f, 0.333333f, 0.99607f));
-
-    glfwSetWindowUserPointer(window, &view_coords);
+    glfwSetWindowUserPointer(window, &renderer);
 
     do
     {
@@ -108,114 +106,7 @@ int main()
         }
 
         renderer.timeStep();
- 
-
-        if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
-        {
-            currSelected = 0;
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_LEFT) == GLFW_PRESS)
-        {
-            if (currSelected == 0)
-            {
-                view_coords[1] += delta * (PI_DIV_2);
-                if (view_coords[1] > PI)
-                {
-                    view_coords[1] -= 2 * PI;
-                } // prevent any potential issues with uncapped growth
-            }
-            else if (currSelected == base.getId() && !rotating)
-            {
-                base.translate(glm::vec3(0.0f, 0.0f, -(delta * 4)));
-            }
-            else if (currSelected == base.getId())
-            {
-                base.rotate(delta * 50 * (PI_DIV_2), glm::vec3(0.0f, 1.0f, 0.0f));
-            }
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_RIGHT) == GLFW_PRESS)
-        {
-            if (currSelected == 0)
-            {
-                view_coords[1] -= delta * (PI_DIV_2);
-                if (view_coords[1] < -PI)
-                {
-                    view_coords[1] += 2 * PI;
-                } // prevent any potential issues with uncapped growth
-            }
-            else if (currSelected == base.getId() && !rotating)
-            {
-                base.translate(glm::vec3(0.0f, 0.0f, (delta * 4)));
-            }
-            else if (currSelected == base.getId())
-            {
-                base.rotate(delta * -50 * (PI_DIV_2), glm::vec3(0.0f, 1.0f, 0.0f));
-            }
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-        {
-            if (currSelected == 0)
-            {
-                view_coords[2] -= delta * (PI_DIV_2);
-                if (view_coords[2] < PI_DIV_32)
-                {
-                    view_coords[2] = PI_DIV_32;
-                } // pretty clamping
-            }
-            else if (currSelected == base.getId() && !rotating)
-            {
-                base.translate(glm::vec3((delta * 4), 0.0f, 0.0f));
-            }
-            else if (currSelected == arm1.getId())
-            {
-                arm1j.rotate(delta * 50 * (PI_DIV_2), glm::vec3(0.0f, 0.0f, 1.0f));
-            }
-            else if (currSelected == arm2.getId())
-            {
-                arm2j.rotate(delta * 50 * (PI_DIV_2), glm::vec3(0.0f, 0.0f, 1.0f));
-            }
-        }
-
-        if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-        {
-            if (currSelected == 0)
-            {
-                view_coords[2] += delta * (PI_DIV_2);
-                if (view_coords[2] > 31 * PI_DIV_32)
-                {
-                    view_coords[2] = 31 * PI_DIV_32;
-                } // pretty clamping
-            }
-            else if (currSelected == base.getId() && !rotating)
-            {
-                base.translate(glm::vec3(-(delta * 4), 0.0f, 0.0f));
-            }
-            else if (currSelected == arm1.getId())
-            {
-                arm1j.rotate(delta * -50 * (PI_DIV_2), glm::vec3(0.0f, 0.0f, 1.0f));
-            }
-            else if (currSelected == arm2.getId())
-            {
-                arm2j.rotate(delta * -50 * (PI_DIV_2), glm::vec3(0.0f, 0.0f, 1.0f));
-            }
-        }
-
-
-        //main loop was already obtuse enough as it is, so i moved these to util.h
-        glm::vec3 pos = calc_pos(view_coords);
-        glm::mat4 viewMatrix = calc_view_matrix(pos);
-
-        // selection_check(window, currSelected, rotating, base, arm1, arm2);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-        // DRAWING the SCENE
-        // grid.draw(viewMatrix, projectionMatrix);
-        // base.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), left_light, right_light, pos, currSelected);
-
+        renderer.render();
         renderer.display();
 
     } // Check if the ESC key was pressed or the window was closed
@@ -292,14 +183,16 @@ static void mouseCallback(GLFWwindow *window, int button, int action, int mods)
 
 static void scrollCallback(GLFWwindow *window, double x, double y)
 {
-    glm::vec3 *coords = static_cast<glm::vec3 *>(glfwGetWindowUserPointer(window));
-    coords->x -= y;
-    if (coords->x < 2) { coords->x = 2; }
+    // glm::vec3 *coords = static_cast<glm::vec3 *>(glfwGetWindowUserPointer(window));
+    // coords->x -= y;
+    // if (coords->x < 2) { coords->x = 2; }
 }
 
 static void refreshCallback(GLFWwindow *window)
 {
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
     glViewport(0, 0, windowWidth, windowHeight);
-    projectionMatrix = glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f);
+
+    Renderer *renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
+    renderer->setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
 }

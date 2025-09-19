@@ -1,25 +1,15 @@
-#include "meshObject.hpp"
+#include "MeshObject.h"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include <vector>
+#include "common/shader.hpp"
 
 #define TINYOBJLOADER_IMPLEMENTATION
-#include "tiny_obj_loader.h"
-#include "structs.h"
+#include "../tiny_obj_loader.h"
 
 
-MeshObject::MeshObject(std::string filepath, std::vector<Renderer::Light>& scene_lights)
+MeshObject::MeshObject(std::vector<Light>& scene_lights, std::string filepath) : Object(scene_lights)
 { 
-    // Initialize the model matrix
-    modelMatrix = glm::mat4(1.0f);
-
-    // Generate and bind VAO, VBO, and EBO
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glGenBuffers(1, &EBO);
-
     glBindVertexArray(VAO);
-
 
     tinyobj::ObjReader reader;
 
@@ -79,17 +69,12 @@ MeshObject::MeshObject(std::string filepath, std::vector<Renderer::Light>& scene
     shaderProgram = LoadShaders("meshVertexShader.glsl", "meshFragmentShader.glsl");
 }
 
-MeshObject::~MeshObject() 
-{
-    glDeleteVertexArrays(1, &VAO);
-    glDeleteBuffers(1, &VBO);
-    glDeleteBuffers(1, &EBO);
-    glDeleteProgram(shaderProgram);
-}
+MeshObject::~MeshObject() {}
 
 void MeshObject::draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) 
 {
     glUseProgram(shaderProgram);
+
 
     glm::mat4 M = transform * modelMatrix;
     GLuint MID = glGetUniformLocation(shaderProgram, "M");
@@ -101,24 +86,10 @@ void MeshObject::draw(const glm::mat4& view, const glm::mat4& projection, const 
     GLuint PID = glGetUniformLocation(shaderProgram, "P");
     glUniformMatrix4fv(PID, 1, GL_FALSE, glm::value_ptr(projection));
     
-    GLuint light1PosID = glGetUniformLocation(shaderProgram, "light1pos");
-    // glUniform3fv(light1PosID, 1, glm::value_ptr(light1.pos));
-
-    GLuint light1ColorID = glGetUniformLocation(shaderProgram, "light1color");
-    // glUniform3fv(light1ColorID, 1, glm::value_ptr(light1.color));
-
-    GLuint light2PosID = glGetUniformLocation(shaderProgram, "light2pos");
-    // glUniform3fv(light2PosID, 1, glm::value_ptr(light2.pos));
-
-    GLuint light2ColorID = glGetUniformLocation(shaderProgram, "light2color");
-    // glUniform3fv(light2ColorID, 1, glm::value_ptr(light2.color));
+    glUniform1i(glGetUniformLocation(shaderProgram, "num_lights"), this->scene_lights.size());
 
     GLuint cameraID = glGetUniformLocation(shaderProgram, "camerapos");
     glUniform3fv(cameraID, 1, glm::value_ptr(camera));
-
-    // bool is_selected = (selected == getId());
-    GLuint selectedID = glGetUniformLocation(shaderProgram, "is_selected");
-    // glUniform1i(selectedID, is_selected);
 
     // Draw the object
     glBindVertexArray(VAO);

@@ -56,10 +56,16 @@ add_definitions(
 
 add_executable(model_viewer
 	source/main.cpp
-	source/meshObject.cpp
-	source/meshObject.hpp
-	source/gridObject.cpp
-	source/gridObject.hpp
+	source/Object/MeshObject.cpp
+	source/Object/MeshObject.h
+	source/Object/GridObject.cpp
+	source/Object/GridObject.h
+	source/Object/AxesObject.cpp
+	source/Object/AxesObject.h
+	source/Object/Object.cpp
+	source/Object/Object.h
+	source/Renderer/Renderer.cpp
+	source/Renderer/Renderer.h
 	common/shader.cpp
 	common/shader.hpp
 	common/controls.cpp
