@@ -11,7 +11,6 @@
 #include <chrono>
 #include <thread>
 
-
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -49,13 +48,12 @@ int main()
     io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;
     ImGui_ImplGlfw_InitForOpenGL(window, true);
     ImGui_ImplOpenGL3_Init();
+    ImGui::StyleColorsDark();
+
 
     Renderer renderer(window);
     renderer.setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
     renderer.addMesh("../objects/base.obj");
-
-    // object initialization
-    // GridObject grid;
 
     // MeshObject base("../objects/base.obj");
     // MeshObject arm1("../objects/arm1.obj");
@@ -93,17 +91,28 @@ int main()
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
-        // ImGui::ShowDemoWindow();
+        ImGui::ShowDemoWindow();
 
-        // ImGui::Begin("Model Viewer");
+        ImGui::Begin("Model Viewer");
         if (ImGui::CollapsingHeader("Layout")) {
             static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
             ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
-            if (ImGui::ColorPicker4("BG Color", (float*)&color, flags)) {
+            if (ImGui::ColorPicker4("BG Color", (float*)&color, flags))
+            {
                 std::cout << "update" << std::endl;
                 glClearColor(color.x, color.y, color.z, color.w);
             }
+
+
+            glm::vec3 pos = renderer.getCamera()->getPosCAR();
+            static float vec[3] = {pos.x, pos.y, pos.z};
+            if (ImGui::DragFloat3("Camera Position", vec, 0.1f))
+            {
+                renderer.getCamera()->setPosCAR({vec[0], vec[1], vec[2]});
+            }
         }
+        ImGui::End();
+
 
         renderer.timeStep();
         renderer.render();

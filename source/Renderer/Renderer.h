@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "../Light.h"
+#include "../Camera/Camera.h"
 #include "../Object/Object.h"
 #include "../Object/MeshObject.h"
 #include "../Object/GridObject.h"
@@ -18,7 +19,9 @@ public:
   void render();
   void display();
 
-  void setCameraPosCYL(glm::vec3 pos);
+  Camera* getCamera() { return &this->camera; }
+
+  void setCameraPosSPH(glm::vec3 pos);
   void setCameraPosCAR(glm::vec3 pos);
 
   const glm::mat4 getProjectionMatrix() { return this->projectionMatrix; }
@@ -40,9 +43,8 @@ private:
 
   GLFWwindow* window;
 
-  glm::vec3 cameraPosCYL;
-  glm::vec3 cameraPosCAR;
-  glm::mat4 viewMatrix;
+  Camera camera;
+  
   glm::mat4 projectionMatrix;
 
   GridObject gridObject;
@@ -55,9 +57,7 @@ private:
   bool renderAxes;
   bool renderLightPoints;
 
-  void convertCYLtoCAR();
-  void convertCARtoCYL();
-  void setViewMatrix();
+
 };
 
 #endif

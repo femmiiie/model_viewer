@@ -66,6 +66,8 @@ add_executable(model_viewer
 	source/Object/Object.h
 	source/Renderer/Renderer.cpp
 	source/Renderer/Renderer.h
+	source/Camera/Camera.cpp
+	source/Camera/Camera.h
 	common/shader.cpp
 	common/shader.hpp
 	common/controls.cpp

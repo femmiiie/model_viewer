@@ -35,16 +35,17 @@ void Renderer::timeStep()
 
 void Renderer::render()
 {
+  glm::mat4 viewMatrix = this->camera.getViewMatrix();
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if (this->renderGrid) { this->gridObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->cameraPosCAR); }
-  if (this->renderAxes) { this->axesObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->cameraPosCAR); }
+  if (this->renderGrid) { this->gridObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR()); }
+  if (this->renderAxes) { this->axesObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR()); }
 
   for (Object* object : this->rootObjects)
   {
-    object->draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->cameraPosCAR);
+    object->draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR());
   }
 }
-
 
 void Renderer::display()
 {
@@ -56,42 +57,12 @@ void Renderer::display()
   glfwPollEvents();
 }
 
-void Renderer::setCameraPosCAR(glm::vec3 pos)
-{
-  this->cameraPosCAR = pos;
-  this->convertCARtoCYL();
-  this->setViewMatrix();
-}
-
-void Renderer::setCameraPosCYL(glm::vec3 pos)
-{
-  this->cameraPosCYL = pos;
-  this->convertCYLtoCAR();
-  this->setViewMatrix();
-}
-
-void Renderer::convertCYLtoCAR()
-{
-  this->cameraPosCAR = glm::vec3(
-    this->cameraPosCYL[0] * sin(this->cameraPosCYL[2]) * cos(this->cameraPosCYL[1]),
-    this->cameraPosCYL[0] * cos(this->cameraPosCYL[2]),
-    this->cameraPosCYL[0] * sin(this->cameraPosCYL[2]) * sin(this->cameraPosCYL[1])
-  );
-}
+void Renderer::setCameraPosCAR(glm::vec3 pos) { this->camera.setPosCAR(pos); }
+void Renderer::setCameraPosSPH(glm::vec3 pos) { this->camera.setPosSPH(pos); }
 
 
-void Renderer::convertCARtoCYL() {
 
-}
 
-void Renderer::setViewMatrix()
-{
-  this->viewMatrix = glm::lookAt(
-    this->cameraPosCAR, // Camera position
-    glm::vec3(0.0f),    // Look at the origin
-    glm::vec3(0, 1, 0)  // Head is looking up at the origin (set to 0,-1,0 to look upside-down)
-  );
-}
 
 Object* Renderer::addMesh(std::string filepath, Object* parent)
 {
