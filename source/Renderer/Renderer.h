@@ -21,8 +21,8 @@ public:
 
   Camera* getCamera() { return &this->camera; }
 
-  void setCameraPosSPH(glm::vec3 pos);
-  void setCameraPosCAR(glm::vec3 pos);
+  void setCameraPosSPH(glm::vec3 pos) { this->camera.setPosSPH(pos); }
+  void setCameraPosCAR(glm::vec3 pos) { this->camera.setPosCAR(pos); }
 
   const glm::mat4 getProjectionMatrix() { return this->projectionMatrix; }
   void setProjectionMatrix(const glm::mat4 p) { this->projectionMatrix = p; }
@@ -32,7 +32,9 @@ public:
 
   void addLight(glm::vec3 position, glm::vec3 color);
 
-
+  bool& getRenderGrid_M() { return this->renderGrid; }
+  bool& getRenderAxes_M() { return this->renderAxes; }
+  bool& getRenderLightPoints_M() { return this->renderLightPoints; }
 
 private:
   double prevTime;
@@ -40,6 +42,10 @@ private:
   double sinceLast;
   double frames;
   double delta;
+
+  bool renderGrid;
+  bool renderAxes;
+  bool renderLightPoints;
 
   GLFWwindow* window;
 
@@ -52,12 +58,6 @@ private:
   std::vector<MeshObject*> rootObjects;
   std::vector<Light> lights;
   GLuint light_UBO;
-
-  bool renderGrid;
-  bool renderAxes;
-  bool renderLightPoints;
-
-
 };
 
 #endif

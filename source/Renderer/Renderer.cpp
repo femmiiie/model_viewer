@@ -56,13 +56,7 @@ void Renderer::display()
   glfwSwapBuffers(window);
   glfwPollEvents();
 }
-
-void Renderer::setCameraPosCAR(glm::vec3 pos) { this->camera.setPosCAR(pos); }
-void Renderer::setCameraPosSPH(glm::vec3 pos) { this->camera.setPosSPH(pos); }
-
-
-
-
+ 
 
 Object* Renderer::addMesh(std::string filepath, Object* parent)
 {

@@ -30,17 +30,9 @@ GLint windowWidth = 1280, windowHeight = 720;
 GLFWwindow *window;
 
 
-int currSelected = 0;
-
-// since base has both translation and rotation actions
-// variable needed to keep track of which is currently being done
-bool rotating = false;
-
 int main()
 {
     if (initWindow() != 0) { return -1; }
-
-
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -50,6 +42,10 @@ int main()
     ImGui_ImplOpenGL3_Init();
     ImGui::StyleColorsDark();
 
+    int x_pos, y_pos, height, width;
+    glfwGetWindowPos(window, &x_pos, &y_pos);
+    glfwGetWindowSize(window, &width, &height);
+    glViewport(0, 0, width * 0.8f, height);
 
     Renderer renderer(window);
     renderer.setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
@@ -79,7 +75,6 @@ int main()
     // arm2j.rotate(-51.401, glm::vec3(0.0f, 0.0f, 1.0f));
     // arm2.rotate(90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
-    // renderer.setCameraPosCAR({8.0f, 0.75f, 1.25f});
     renderer.setCameraPosCAR({8.0f, 3.0f, 0.0f});
     renderer.addLight({0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f});
     renderer.addLight({0.0f, 3.0f, -5.0f}, {0.341f, 0.333f, 0.996f});
@@ -92,8 +87,30 @@ int main()
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
         ImGui::ShowDemoWindow();
-
         ImGui::Begin("Model Viewer");
+
+        static ImVec2 menu_pos(width * 0.8f, 0);
+        static ImVec2 menu_size(width * 0.2f, height);
+        
+
+        if (menu_pos.x != ImGui::GetWindowPos().x   ||
+            menu_pos.y != ImGui::GetWindowPos().y   ||
+            menu_size.x != ImGui::GetWindowSize().x ||
+            menu_size.y != ImGui::GetWindowSize().y)
+        {
+            menu_size = ImVec2(ImGui::GetWindowSize().x, windowHeight);
+            menu_pos = ImVec2(windowWidth - menu_size.x, 0);
+
+            ImGui::SetWindowSize(menu_size);
+            ImGui::SetWindowPos(menu_pos);
+
+            glViewport(0, 0, windowWidth - menu_size.x, windowHeight);
+            renderer.setProjectionMatrix(glm::perspective(45.0f, (float)(windowWidth - menu_size.x) / (float)windowHeight, 0.1f, 100.0f));
+        }
+
+        ImGui::GetWindowPos();
+        ImGui::GetWindowSize();
+
         if (ImGui::CollapsingHeader("Layout")) {
             static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
             ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
@@ -103,6 +120,8 @@ int main()
                 glClearColor(color.x, color.y, color.z, color.w);
             }
 
+            ImGui::Checkbox("Show grid", &renderer.getRenderGrid_M());
+            ImGui::Checkbox("Show axes", &renderer.getRenderAxes_M());
 
             glm::vec3 pos = renderer.getCamera()->getPosCAR();
             static float vec[3] = {pos.x, pos.y, pos.z};
@@ -113,6 +132,8 @@ int main()
         }
         ImGui::End();
 
+        // glfwPollEvents()
+        // glfwGetKey()
 
         renderer.timeStep();
         renderer.render();
@@ -202,6 +223,7 @@ static void refreshCallback(GLFWwindow *window)
     glfwGetWindowSize(window, &windowWidth, &windowHeight);
     glViewport(0, 0, windowWidth, windowHeight);
 
+
     Renderer *renderer = static_cast<Renderer *>(glfwGetWindowUserPointer(window));
-    renderer->setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
+    renderer->setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth /*- ImGui::GetWindowSize().x*/ / (float)windowHeight, 0.1f, 100.0f));
 }
