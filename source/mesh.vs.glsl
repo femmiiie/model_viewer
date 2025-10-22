@@ -20,15 +20,7 @@ void main() {
     gl_Position = P * V * M * vec4(vertex_position, 1.0);
 
     position = (M * vec4(vertex_position, 1.0)).xyz;
-    // eyevector = camerapos - (V * M * vec4(vertex_position, 1.0)).xyz;
     eyevector = vec3(0, 0, 0) - (V * M * vec4(vertex_position, 1.0)).xyz;
-
-
-    // light1dir = (V * vec4(light1pos, 1.0)).xyz + eyevector;
-    // light2dir = (V * vec4(light2pos, 1.0)).xyz + eyevector;
-
-    // light1dir = normalize(light1pos - position);
-    // light2dir = normalize(light2pos - position);
 
     // normal = (V * M * vec4(vertex_normal, 0.0)).xyz;
     normal = mat3(transpose(inverse(M))) * vertex_normal;
