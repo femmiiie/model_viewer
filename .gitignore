@@ -12,4 +12,5 @@ OpenGL-tutorial_v*
 **.mtl
 .DS_Store
 
+source/*.ini
 .vscode/*
