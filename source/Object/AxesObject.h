@@ -7,7 +7,7 @@ class AxesObject : public Object
 {
 public:
   AxesObject(std::vector<Light>& scene_lights);
-  ~AxesObject();
+  ~AxesObject() {}
 
   void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
 };

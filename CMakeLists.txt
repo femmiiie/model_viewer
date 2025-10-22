@@ -79,10 +79,12 @@ add_executable(model_viewer
 	common/vboindexer.cpp
 	common/vboindexer.hpp
 	
-	source/meshVertexShader.glsl
-	source/meshFragmentShader.glsl
-	source/gridVertexShader.glsl
-	source/gridFragmentShader.glsl
+	source/mesh.vs.glsl
+	source/mesh.fs.glsl
+	source/grid.vs.glsl
+	source/grid.fs.glsl
+	source/axes.vs.glsl
+	source/axes.gs.glsl
 )
 target_link_libraries(model_viewer
 	${ALL_LIBS}

@@ -66,7 +66,7 @@ MeshObject::MeshObject(std::vector<Light>& scene_lights, std::string filepath) :
     glBindVertexArray(0);
 
     // Load and compile shaders
-    shaderProgram = LoadShaders("meshVertexShader.glsl", "meshFragmentShader.glsl");
+    shaderProgram = LoadShaders("mesh.vs.glsl", "mesh.fs.glsl");
 }
 
 MeshObject::~MeshObject() {}

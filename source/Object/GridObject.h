@@ -10,6 +10,18 @@ public:
     ~GridObject();
 
     void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
+
+    int& getGridSize_M() { return this->gridSize; }
+    int& getGridSpacing_M() { return this->gridSpacing; }
+    
+    void generateGrid();
+
+private:
+    std::vector<GLfloat> vertices;
+    std::vector<GLuint> indices;
+
+    int gridSize;
+    int gridSpacing;
 };
 
 #endif
