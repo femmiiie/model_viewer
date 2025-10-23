@@ -64,6 +64,8 @@ add_executable(model_viewer
 	source/Object/AxesObject.h
 	source/Object/Object.cpp
 	source/Object/Object.h
+	source/InputManager/InputManager.cpp
+	source/InputManager/InputManager.h
 	source/Renderer/Renderer.cpp
 	source/Renderer/Renderer.h
 	source/Camera/Camera.cpp
@@ -79,12 +81,12 @@ add_executable(model_viewer
 	common/vboindexer.cpp
 	common/vboindexer.hpp
 	
-	source/mesh.vs.glsl
-	source/mesh.fs.glsl
-	source/grid.vs.glsl
-	source/grid.fs.glsl
-	source/axes.vs.glsl
-	source/axes.gs.glsl
+	source/shaders/mesh.vs.glsl
+	source/shaders/mesh.fs.glsl
+	source/shaders/grid.vs.glsl
+	source/shaders/grid.fs.glsl
+	source/shaders/axes.vs.glsl
+	source/shaders/axes.gs.glsl
 )
 target_link_libraries(model_viewer
 	${ALL_LIBS}
