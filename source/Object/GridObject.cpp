@@ -40,6 +40,10 @@ void GridObject::draw(const glm::mat4& view, const glm::mat4& projection, const 
 
 void GridObject::generateGrid()
 {
+    if (this->gridSize < 1) { this->gridSize = 1; }
+    if (this->gridSpacing < 1) { this->gridSpacing = 1; }
+
+
     int step = this->gridSize / this->gridSpacing;
     float halfGrid = (float)(gridSize/2);
 

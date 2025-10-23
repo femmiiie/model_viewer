@@ -7,6 +7,7 @@
 #include "Renderer/Renderer.h"
 #include "Object/MeshObject.h"
 #include "Object/GridObject.h"
+#include "InputManager/InputManager.h"
 
 #include <chrono>
 #include <thread>
@@ -22,8 +23,6 @@ const float PI_DIV_32 = PI / 32;
 
 // Function prototypes
 int initWindow(void);
-static void mouseCallback(GLFWwindow *, int, int, int);
-static void scrollCallback(GLFWwindow *, double, double);
 static void refreshCallback(GLFWwindow *);
 
 GLint windowWidth = 1280, windowHeight = 720;
@@ -50,6 +49,8 @@ int main()
     Renderer renderer(window);
     renderer.setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
     renderer.addMesh("../objects/base.obj");
+
+    InputManager::loadInputs(window, &renderer);
 
     // MeshObject base("../objects/base.obj");
     // MeshObject arm1("../objects/arm1.obj");
@@ -91,7 +92,6 @@ int main()
 
         static ImVec2 menu_pos(width * 0.8f, 0);
         static ImVec2 menu_size(width * 0.2f, height);
-        
 
         if (menu_pos.x != ImGui::GetWindowPos().x   ||
             menu_pos.y != ImGui::GetWindowPos().y   ||
@@ -113,14 +113,27 @@ int main()
 
         if (ImGui::CollapsingHeader("Layout")) {
             static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
-            ImGuiColorEditFlags flags = ImGuiColorEditFlags_AlphaBar | ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
+            ImGuiColorEditFlags flags = ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
             if (ImGui::ColorPicker4("BG Color", (float*)&color, flags))
             {
-                std::cout << "update" << std::endl;
                 glClearColor(color.x, color.y, color.z, color.w);
             }
 
-            ImGui::Checkbox("Show grid", &renderer.getRenderGrid_M());
+            static bool& show_grid = renderer.getRenderGrid_M();
+
+            ImGui::Checkbox("Show grid", &show_grid);
+            if (show_grid)
+            {
+                GridObject& grid = renderer.getGridObject_M();
+                if (ImGui::DragInt("Grid Size", &grid.getGridSize_M(), 1.0f, 1) ||
+                    ImGui::DragInt("Grid Spacing", &grid.getGridSpacing_M(), 1.0f, 1) )
+                {
+                    std::cout << "update" << std::endl;
+                    grid.generateGrid();
+                }
+            }
+
+
             ImGui::Checkbox("Show axes", &renderer.getRenderAxes_M());
 
             glm::vec3 pos = renderer.getCamera()->getPosCAR();
@@ -132,7 +145,7 @@ int main()
         }
         ImGui::End();
 
-        // glfwPollEvents()
+        // glfwPollEvents();
         // glfwGetKey()
 
         renderer.timeStep();
@@ -187,35 +200,15 @@ int initWindow()
     // Set up inputs
     glfwSetInputMode(window, GLFW_STICKY_KEYS, GL_FALSE);
     glfwSetCursorPos(window, windowWidth / 2, windowHeight / 2);
-    glfwSetMouseButtonCallback(window, mouseCallback);
-    glfwSetScrollCallback(window, scrollCallback);
     glfwSetWindowRefreshCallback(window, refreshCallback);
 
     // Dark blue background
     glClearColor(0.0f, 0.0f, 0.2f, 0.0f);
-    // Enable depth test
     glEnable(GL_DEPTH_TEST);
-    // Accept fragment if it closer to the camera than the former one
     glDepthFunc(GL_LESS);
-    // Cull triangles which normal is not towards the camera
     glEnable(GL_CULL_FACE);
 
     return 0;
-}
-
-static void mouseCallback(GLFWwindow *window, int button, int action, int mods)
-{
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS)
-    {
-        // std::cout << "Left mouse button pressed" << std::endl;
-    }
-}
-
-static void scrollCallback(GLFWwindow *window, double x, double y)
-{
-    // glm::vec3 *coords = static_cast<glm::vec3 *>(glfwGetWindowUserPointer(window));
-    // coords->x -= y;
-    // if (coords->x < 2) { coords->x = 2; }
 }
 
 static void refreshCallback(GLFWwindow *window)

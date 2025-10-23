@@ -36,6 +36,8 @@ public:
   bool& getRenderAxes_M() { return this->renderAxes; }
   bool& getRenderLightPoints_M() { return this->renderLightPoints; }
 
+  GridObject& getGridObject_M() { return this->gridObject; }
+
 private:
   double prevTime;
   double currTime;
