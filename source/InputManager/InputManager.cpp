@@ -3,7 +3,7 @@
 void mycallback(int action, int mods)
 {
   if (action == GLFW_PRESS) {
-    InputManager::renderer->setCameraPosCAR({8.0f, 2.0f, 0.0f});
+    InputManager::renderer->setCameraPosCAR({6.0f, 2.0f, 0.0f});
   }
 
   else if (action == GLFW_RELEASE) {

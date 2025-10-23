@@ -13,6 +13,10 @@
 
 #include "../Renderer/Renderer.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 using Callback = std::function<void(int, int)>;
 
 class InputManager
@@ -25,23 +29,31 @@ public:
   static void loadInputs(GLFWwindow* window, Renderer* renderer);
   static void add(int key, Callback callback) { callbacks[key].emplace_back(callback); }
 
-  static void mousePress(GLFWwindow* window, int button, int action, int mods) 
+  static void mousePress(GLFWwindow* window, int key, int action, int mods) 
   {
-    if (callbacks.find(button) == callbacks.end()) { return; }
-    for (Callback& callback : callbacks[button]) { callback(action, mods); }
+    ImGui_ImplGlfw_MouseButtonCallback(window, key, action, mods);
+
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.WantCaptureMouse) { return; }
+
+    if (callbacks.find(key) == callbacks.end()) { return; }
+    for (Callback& callback : callbacks[key]) { callback(action, mods); }
   }
 
-  static void keyPress(GLFWwindow* window, int button, int scancode, int action, int mods) 
+  static void keyPress(GLFWwindow* window, int key, int scancode, int action, int mods) 
   {
-    if (callbacks.find(button) == callbacks.end()) { return; }
-    for (Callback& callback : callbacks[button]) { callback(action, mods); }
+    ImGui_ImplGlfw_KeyCallback(window, key, scancode, action, mods);
+
+    ImGuiIO& io = ImGui::GetIO();
+    if (io.WantCaptureKeyboard) { return; }
+
+    if (callbacks.find(key) == callbacks.end()) { return; }
+    for (Callback& callback : callbacks[key]) { callback(action, mods); }
   }
 
 private:
   InputManager() {}
 
 };
-
-void loadInputs();
 
 #endif
