@@ -137,7 +137,7 @@ int main()
             ImGui::Checkbox("Show axes", &renderer.getRenderAxes_M());
 
             glm::vec3 pos = renderer.getCamera()->getPosCAR();
-            static float vec[3] = {pos.x, pos.y, pos.z};
+            float vec[3] = {pos.x, pos.y, pos.z};
             if (ImGui::DragFloat3("Camera Position", vec, 0.1f))
             {
                 renderer.getCamera()->setPosCAR({vec[0], vec[1], vec[2]});
@@ -145,8 +145,7 @@ int main()
         }
         ImGui::End();
 
-        // glfwPollEvents();
-        // glfwGetKey()
+        InputManager::pollInputs();
 
         renderer.timeStep();
         renderer.render();

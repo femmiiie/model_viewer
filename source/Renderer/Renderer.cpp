@@ -14,6 +14,8 @@ Renderer::Renderer(GLFWwindow* window) : gridObject(this->lights), axesObject(th
   this->renderGrid = false;
   this->renderAxes = false;
 
+  this->camera.setScrollScaling(0.5);
+
   glGenBuffers(1, &this->light_UBO);
 }
 

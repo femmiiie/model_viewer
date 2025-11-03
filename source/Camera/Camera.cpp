@@ -9,30 +9,44 @@ void Camera::setPosCAR(glm::vec3 pos)
 void Camera::setPosSPH(glm::vec3 pos)
 {
   this->positionSPH = pos;
+  if (this->positionSPH.x < 2) { this->positionSPH.x = 2; }
   this->convertSPHtoCAR();
 }
 
 
 void Camera::convertSPHtoCAR()
 {
+  float r = this->positionSPH.x;
+  float theta = this->positionSPH.y;
+  float phi = this->positionSPH.z;
+
   this->positionCAR = glm::vec3(
-    this->positionSPH[0] * sin(this->positionSPH[2]) * cos(this->positionSPH[1]),
-    this->positionSPH[0] * cos(this->positionSPH[2]),
-    this->positionSPH[0] * sin(this->positionSPH[2]) * sin(this->positionSPH[1])
+    r * sin(phi) * cos(theta),
+    r * cos(phi),
+    r * sin(phi) * sin(theta)
   );
+
+  this->positionCAR += this->eyeVector;
   this->setViewMatrix();
 }
 
 
 void Camera::convertCARtoSPH() {
+  glm::vec3 offset = this->positionCAR - this->eyeVector;
+
+  float r = glm::length(offset);
+  float theta = std::atan2(offset.z, offset.x);
+  float phi = std::acos(offset.y / r);
+
+  this->positionSPH = glm::vec3(r, theta, phi);
   this->setViewMatrix();
 }
 
 void Camera::setViewMatrix()
 {
   this->viewMatrix = glm::lookAt(
-    this->positionCAR,  // Camera position
-    glm::vec3(0.0f),    // Look at the origin
-    glm::vec3(0, 1, 0)  // Head is looking up at the origin (set to 0,-1,0 to look upside-down)
+    this->positionCAR,
+    this->eyeVector,
+    glm::vec3(0, 1, 0)
   );
 }

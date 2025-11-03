@@ -1,13 +1,13 @@
 features:
 
-camera controls
-toggleable center on axis, or mouse control direction
+DONE zoom in/out
+DONE blender-style camera controls 
 
 DONE settable background color
 
 load obj from file
 set obj position,rotation,scale
-toggleable axis lines and field grid lines
+DONE toggleable axis lines and field grid lines
 
 (multiple objs?)
 shader options, flat, point light, GI, etc.
