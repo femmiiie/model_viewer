@@ -1,0 +1,65 @@
+#include "Menu.h"
+
+void Menu::Init(Renderer* renderer)
+{
+  Menu::renderer = renderer;
+}
+
+
+nfdu8char_t* Menu::GetFile()
+{
+  nfdu8char_t *filepath;
+  nfdu8filteritem_t filter[1] = { {"OBJ File", "obj"} };
+  
+  nfdopendialogu8args_t args = {0};
+  args.filterList = filter;
+  args.filterCount = 1;
+  NFD_GetNativeWindowFromGLFWWindow(renderer->getWindow(), &args.parentWindow);
+  
+  nfdresult_t result = NFD_OpenDialogU8_With(&filepath, &args);
+
+  if (result == NFD_ERROR) { return NULL; }
+  return filepath;
+}
+
+
+void Menu::RenderNode(Object* node, ImGuiTreeNodeFlags node_flags)
+{
+	std::vector<Object*>& children = node->getChildren_M();
+	if (children.empty()) { node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; }
+  if (Menu::selected_node == node) { node_flags |= ImGuiTreeNodeFlags_Selected; }
+
+	bool opened = ImGui::TreeNodeEx((void*)node, node_flags, node->getCName());
+	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) { Menu::selected_node = node; }
+
+	if (opened && !(node_flags & ImGuiTreeNodeFlags_Leaf))
+	{
+		for (Object* child : children) { RenderNode(child, node_flags); }
+		ImGui::TreePop();
+	}
+}
+
+
+void Menu::ObjectSelector()
+{
+  if (ImGui::Button("+")) { ImGui::OpenPopup("spawn_object"); }
+    
+  if (ImGui::BeginPopup("spawn_object"))
+  {
+    if (ImGui::Selectable("Object"))
+    {
+      nfdu8char_t* filepath = GetFile();
+      if (filepath) { renderer->addMesh(filepath, selected_node); }
+    }
+  
+    if (ImGui::Selectable("Light")) { renderer->addLight(selected_node); }
+    ImGui::EndPopup();
+  }
+
+  if (ImGui::TreeNodeEx("Scene", Menu::base_flags | ImGuiTreeNodeFlags_DefaultOpen))
+  {
+		if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) { selected_node = nullptr; }
+		for (Object* root : renderer->getRootObject()) { RenderNode(root, Menu::base_flags); }
+		ImGui::TreePop();
+	}
+}
