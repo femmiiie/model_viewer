@@ -5,7 +5,7 @@
 #include <vector>
 #include <numeric>
 
-GridObject::GridObject(std::vector<Light>& scene_lights) : Object(scene_lights)
+GridObject::GridObject() : Object()
 {   
     this->gridSize = 10;
     this->gridSpacing = 1;

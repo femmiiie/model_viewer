@@ -2,12 +2,13 @@
 #define RENDERER_H
 
 #include <vector>
-#include "../Light.h"
 #include "../Camera/Camera.h"
 #include "../Object/Object.h"
 #include "../Object/MeshObject.h"
 #include "../Object/GridObject.h"
 #include "../Object/AxesObject.h"
+#include "../Object/LightObject.h"
+
 
 class Renderer
 {
@@ -27,10 +28,9 @@ public:
   const glm::mat4 getProjectionMatrix() { return this->projectionMatrix; }
   void setProjectionMatrix(const glm::mat4 p) { this->projectionMatrix = p; }
 
-  std::vector<MeshObject*> getRootObject() { return this->rootObjects; }
+  std::vector<Object*> getRootObject() { return this->rootObjects; }
   Object* addMesh(std::string filepath, Object* parent = NULL);
-
-  void addLight(glm::vec3 position, glm::vec3 color);
+  Object* addLight(Object* parent = NULL);
 
   bool& getRenderGrid_M() { return this->renderGrid; }
   bool& getRenderAxes_M() { return this->renderAxes; }
@@ -59,8 +59,8 @@ private:
 
   GridObject gridObject;
   AxesObject axesObject;
-  std::vector<MeshObject*> rootObjects;
-  std::vector<Light> lights;
+  std::vector<Object*> rootObjects;
+  std::vector<LightData*> lights; //TODO: Implement removing lightsobjs to remove this light
   GLuint light_UBO;
 };
 

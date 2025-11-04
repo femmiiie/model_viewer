@@ -1,6 +1,6 @@
 #include "Object.h"
 
-Object::Object(std::vector<Light>& lights) : modelMatrix(glm::mat4(1)), scene_lights(lights) 
+Object::Object() : modelMatrix(glm::mat4(1)) 
 {
     // Generate and bind VAO, VBO, and EBO
     glGenVertexArrays(1, &VAO);

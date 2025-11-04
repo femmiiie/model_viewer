@@ -7,13 +7,12 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <vector>
-#include "../Light.h"
 
 
 class Object
 {
 public:
-  Object(std::vector<Light>& lights);
+  Object();
   virtual ~Object() = 0;
 
   virtual void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) = 0;
@@ -38,8 +37,6 @@ protected:
   GLsizei numIndices;
 
   std::string name = "New Object";
-
-  std::vector<Light>& scene_lights;
   std::vector<Object*> children;
 };
 

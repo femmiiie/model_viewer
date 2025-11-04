@@ -1,4 +1,5 @@
 #include "MeshObject.h"
+
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "common/shader.hpp"
@@ -7,7 +8,7 @@
 #include "../tiny_obj_loader.h"
 
 
-MeshObject::MeshObject(std::vector<Light>& scene_lights, std::string filepath) : Object(scene_lights)
+MeshObject::MeshObject(std::vector<LightData*>& scene_lights, std::string filepath) : Object(), scene_lights(scene_lights)
 { 
     glBindVertexArray(VAO);
 

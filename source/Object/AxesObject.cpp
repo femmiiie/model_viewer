@@ -5,7 +5,7 @@
 #include <vector>
 #include <numeric>
 
-AxesObject::AxesObject(std::vector<Light>& scene_lights) : Object(scene_lights)
+AxesObject::AxesObject() : Object()
 {    
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);

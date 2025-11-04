@@ -4,7 +4,7 @@
 
 #include <iostream>
 
-Renderer::Renderer(GLFWwindow* window) : gridObject(this->lights), axesObject(this->lights)
+Renderer::Renderer(GLFWwindow* window) : gridObject(), axesObject()
 {
   this->prevTime = glfwGetTime();
   this->sinceLast = 0;
@@ -69,11 +69,18 @@ Object* Renderer::addMesh(std::string filepath, Object* parent)
   return obj;
 }
 
-void Renderer::addLight(glm::vec3 position, glm::vec3 color)
+Object* Renderer::addLight(Object* parent)
 {
-  this->lights.emplace_back(Light(position, color));
+  LightObject* obj = new LightObject();
+
+  if (parent) { parent->getChildren_M().emplace_back(obj); }
+  else { this->rootObjects.emplace_back(obj); }
+
+  this->lights.emplace_back(&obj->light);
 
   glBindBuffer(GL_UNIFORM_BUFFER, this->light_UBO);
-  glBufferData(GL_UNIFORM_BUFFER, this->lights.size() * sizeof(Light), this->lights.data(), GL_DYNAMIC_DRAW);
+  glBufferData(GL_UNIFORM_BUFFER, this->lights.size() * sizeof(LightData), this->lights.data(), GL_DYNAMIC_DRAW);
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, this->light_UBO);
+
+  return obj;
 }
