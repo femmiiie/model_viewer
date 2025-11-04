@@ -63,7 +63,7 @@ void Renderer::display()
 Object* Renderer::addMesh(std::string filepath, Object* parent)
 {
   MeshObject* obj = new MeshObject(this->lights, filepath);
-  if (parent) { parent->getChildren().emplace_back(obj); }
+  if (parent) { parent->getChildren_M().emplace_back(obj); }
   else { this->rootObjects.emplace_back(obj); }
 
   return obj;

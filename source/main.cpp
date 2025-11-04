@@ -12,6 +12,11 @@
 #include <chrono>
 #include <thread>
 
+#include "menu.cpp"
+
+#include <nfd.h>
+#include <nfd_glfw3.h>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -41,6 +46,11 @@ int main()
     ImGui_ImplOpenGL3_Init();
     ImGui::StyleColorsDark();
 
+    NFD_Init();
+
+    nfdwindowhandle_t fdWindow;
+    NFD_GetNativeWindowFromGLFWWindow(window, &fdWindow);
+
     int x_pos, y_pos, height, width;
     glfwGetWindowPos(window, &x_pos, &y_pos);
     glfwGetWindowSize(window, &width, &height);
@@ -48,7 +58,8 @@ int main()
 
     Renderer renderer(window);
     renderer.setProjectionMatrix(glm::perspective(45.0f, (float)windowWidth / (float)windowHeight, 0.1f, 100.0f));
-    renderer.addMesh("../objects/base.obj");
+    // auto obj = renderer.addMesh("../objects/base.obj");
+    // renderer.addMesh("../objects/arm1.obj", obj);
 
     InputManager::loadInputs(window, &renderer);
 
@@ -111,6 +122,8 @@ int main()
         ImGui::GetWindowPos();
         ImGui::GetWindowSize();
 
+        if (ImGui::CollapsingHeader("Objects")) { ObjectSelector(renderer); }
+
         if (ImGui::CollapsingHeader("Layout")) {
             static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
             ImGuiColorEditFlags flags = ImGuiColorEditFlags_DisplayRGB | ImGuiColorEditFlags_NoSidePreview;
@@ -157,6 +170,8 @@ int main()
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplGlfw_Shutdown();
     ImGui::DestroyContext();
+
+    NFD_Quit();
 
     glfwTerminate();
     return 0;

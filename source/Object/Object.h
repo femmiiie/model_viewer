@@ -26,13 +26,18 @@ public:
   void scale(float factor);
   glm::mat4 getTransformation();
 
-  std::vector<Object*> getChildren() { return this->children; }
+  std::vector<Object*>& getChildren_M() { return this->children; }
+
+  std::string getName() { return this->name; }
+  const char* getCName() { return this->name.c_str(); }
 
 protected:
   GLuint VAO, VBO, EBO;
   GLuint shaderProgram;
   glm::mat4 modelMatrix;
   GLsizei numIndices;
+
+  std::string name = "New Object";
 
   std::vector<Light>& scene_lights;
   std::vector<Object*> children;

@@ -38,6 +38,8 @@ public:
 
   GridObject& getGridObject_M() { return this->gridObject; }
 
+  GLFWwindow* getWindow() { return this->window; }
+
 private:
   double prevTime;
   double currTime;
