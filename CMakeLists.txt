@@ -5,19 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 find_package(OpenGL REQUIRED)
 
-
-if( CMAKE_BINARY_DIR STREQUAL CMAKE_SOURCE_DIR )
-    message( FATAL_ERROR "Please select another Build Directory ! (and give it a clever name, like bin_Visual2012_64bits/)" )
-endif()
-if( CMAKE_SOURCE_DIR MATCHES " " )
-	message( "Your Source Directory contains spaces. If you experience problems when compiling, this can be the cause." )
-endif()
-if( CMAKE_BINARY_DIR MATCHES " " )
-	message( "Your Build Directory contains spaces. If you experience problems when compiling, this can be the cause." )
-endif()
-
-
-
 # Compile external dependencies 
 add_subdirectory (external)
 add_subdirectory (external/nativefiledialog-extended-1.2.1)
@@ -30,7 +17,6 @@ list(APPEND CMAKE_MODULE_PATH
 )
 include(CreateLaunchers)
 include(MSVCMultipleProcessCompile) # /MP
-
 
 
 include_directories(
@@ -60,53 +46,24 @@ add_definitions(
 	-D_CRT_SECURE_NO_WARNINGS
 )
 
+file(GLOB_RECURSE MODEL_VIEWER_SOURCES CONFIGURE_DEPENDS
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/shaders/*.glsl"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/source/*.h"
+	"${CMAKE_CURRENT_SOURCE_DIR}/common/*.cpp"
+	"${CMAKE_CURRENT_SOURCE_DIR}/common/*.h"
+)
 
-add_executable(model_viewer
-	source/main.cpp
-	source/Object/MeshObject.cpp
-	source/Object/MeshObject.h
-	source/Object/GridObject.cpp
-	source/Object/GridObject.h
-	source/Object/AxesObject.cpp
-	source/Object/AxesObject.h
-	source/Object/Object.cpp
-	source/Object/Object.h
-	source/InputManager/InputManager.cpp
-	source/InputManager/InputManager.h
-	source/Renderer/Renderer.cpp
-	source/Renderer/Renderer.h
-	source/Camera/Camera.cpp
-	source/Camera/Camera.h
-	common/shader.cpp
-	common/shader.hpp
-	common/controls.cpp
-	common/controls.hpp
-	common/texture.cpp
-	common/texture.hpp
-	common/objloader.cpp
-	common/objloader.hpp
-	common/vboindexer.cpp
-	common/vboindexer.hpp
-	
-	source/shaders/mesh.vs.glsl
-	source/shaders/mesh.fs.glsl
-	source/shaders/grid.vs.glsl
-	source/shaders/grid.fs.glsl
-	source/shaders/axes.vs.glsl
-	source/shaders/axes.gs.glsl
-)
-target_link_libraries(model_viewer
-	${ALL_LIBS}
-)
+add_executable(model_viewer ${MODEL_VIEWER_SOURCES})
+
+target_link_libraries(model_viewer ${ALL_LIBS})
+
 # Xcode and Visual working directories
 set_target_properties(model_viewer PROPERTIES XCODE_ATTRIBUTE_CONFIGURATION_BUILD_DIR "${CMAKE_CURRENT_SOURCE_DIR}/source/")
 create_target_launcher(model_viewer WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/source/")
 
-
-
 SOURCE_GROUP(common REGULAR_EXPRESSION ".*/common/.*" )
 SOURCE_GROUP(shaders REGULAR_EXPRESSION ".*/.*shader$" )
-
 
 if (NOT ${CMAKE_GENERATOR} MATCHES "Xcode" )
 add_custom_command(
@@ -115,7 +72,7 @@ add_custom_command(
 )
 
 # Copy all .glsl files to build directory
-file(GLOB GLSL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/source/*.glsl")
+file(GLOB GLSL_FILES "${CMAKE_CURRENT_SOURCE_DIR}/source/shaders/*.glsl")
 foreach(GLSL_FILE ${GLSL_FILES})
     add_custom_command(
         TARGET model_viewer POST_BUILD
