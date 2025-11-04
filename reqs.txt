@@ -2,14 +2,26 @@ features:
 
 DONE zoom in/out
 DONE blender-style camera controls 
-
+DONE load obj from file
 DONE settable background color
-
-load obj from file
-set obj position,rotation,scale
 DONE toggleable axis lines and field grid lines
+DONE (multiple objs?)
+DONE add new lights
+DONE visualize lights as points
+DONE make lights childable to objects?
 
-(multiple objs?)
-shader options, flat, point light, GI, etc.
-(multiple lights?)
-(custom shader capability? including tessellation types)
+set obj position,rotation,scale
+set light position,luminance
+
+removeable objects
+removeable lights
+
+set projection type
+set shader for object
+custom shaders per object
+
+MOVE CUSTOM SHADER LOADER TO SOMEWHERE NEW
+
+global flat shading toggleable
+
+saving/loading settings
