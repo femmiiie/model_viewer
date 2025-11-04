@@ -20,12 +20,17 @@ endif()
 
 # Compile external dependencies 
 add_subdirectory (external)
+add_subdirectory (external/nativefiledialog-extended-1.2.1)
 
 # On Visual 2005 and above, this module can set the debug working directory
 # cmake_policy(SET CMP0026 OLD)
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/external/rpavlik-cmake-modules-fe2273")
+list(APPEND CMAKE_MODULE_PATH 
+"${CMAKE_SOURCE_DIR}/external/rpavlik-cmake-modules-fe2273"
+# "${CMAKE_SOURCE_DIR}/external/nativefiledialog-extended-1.2.1"
+)
 include(CreateLaunchers)
 include(MSVCMultipleProcessCompile) # /MP
+
 
 
 include_directories(
@@ -34,7 +39,8 @@ include_directories(
 	external/glew-1.13.0/include/
 	external/assimp-3.0.1270/include/
 	external/imgui/
-	external/imgui/backends
+	external/imgui/backends/
+	external/nativefiledialog-extended-1.2.1/src/include/
 	.
 )
 
@@ -43,6 +49,7 @@ set(ALL_LIBS
 	glfw
 	GLEW_1130
 	imgui
+	nfd
 )
 
 add_definitions(
