@@ -15,9 +15,9 @@ using namespace std;
 #include "shader.hpp"
 
 
-GLuint CompileShader(char* filepath, GLenum type)
+GLuint CompileShader(const char* filepath, GLenum type)
 {
-	if (filepath == NULL) { return -1; }
+	if (!filepath) { return -1; }
 
 	GLuint ShaderID = glCreateShader(type);
 
@@ -58,11 +58,11 @@ GLuint CompileShader(char* filepath, GLenum type)
 	return ShaderID;
 }
 
-GLuint LoadShadersGeneric(char* vs_filepath,
-													char* tcs_filepath,
-													char* tes_filepath,
-													char* gs_filepath,
-												  char* fs_filepath)
+GLuint LoadShadersGeneric(const char* vs_filepath,
+													const char* tcs_filepath,
+													const char* tes_filepath,
+													const char* gs_filepath,
+												  const char* fs_filepath)
 {
 
 	GLuint vsID = CompileShader(vs_filepath, GL_VERTEX_SHADER);

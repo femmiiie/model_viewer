@@ -2,11 +2,11 @@
 #define SHADER_HPP
 
 GLuint CompileShader(char* filepath, GLenum type);
-GLuint LoadShadersGeneric(char* vs_filepath,
-													char* tcs_filepath,
-													char* tes_filepath,
-													char* gs_filepath,
-												  char* fs_filepath);
+GLuint LoadShadersGeneric(const char* vs_filepath,
+													const char* tcs_filepath,
+													const char* tes_filepath,
+													const char* gs_filepath,
+												  const char* fs_filepath);
 
 GLuint LoadShaders(const char * vertex_file_path,const char * fragment_file_path);
 
