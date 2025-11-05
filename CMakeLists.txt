@@ -27,6 +27,7 @@ include_directories(
 	external/imgui/
 	external/imgui/backends/
 	external/nativefiledialog-extended-1.2.1/src/include/
+	external/
 	.
 )
 
