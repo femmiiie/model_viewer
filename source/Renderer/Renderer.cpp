@@ -19,6 +19,14 @@ Renderer::Renderer(GLFWwindow* window) : gridObject(), axesObject()
   glGenBuffers(1, &this->light_UBO);
 }
 
+Renderer::~Renderer()
+{
+  for (LightData* data : this->lights)
+  {
+    delete data;
+  }
+}
+
 void Renderer::timeStep()
 {
   this->currTime = glfwGetTime();
@@ -60,7 +68,7 @@ void Renderer::display()
 }
  
 
-Object* Renderer::addMesh(std::string filepath, Object* parent)
+MeshObject* Renderer::addMesh(std::string filepath, Object* parent)
 {
   MeshObject* obj = new MeshObject(this->lights, filepath);
   if (parent) { parent->getChildren_M().emplace_back(obj); }
@@ -69,18 +77,36 @@ Object* Renderer::addMesh(std::string filepath, Object* parent)
   return obj;
 }
 
-Object* Renderer::addLight(Object* parent)
+LightObject* Renderer::addLight(Object* parent)
 {
   LightObject* obj = new LightObject();
 
   if (parent) { parent->getChildren_M().emplace_back(obj); }
   else { this->rootObjects.emplace_back(obj); }
 
-  this->lights.emplace_back(&obj->light);
+  this->lights.emplace_back(LightData::CreateInterface(*obj));
+  this->regenerateLightUBO();
 
+  return obj;
+}
+
+LightObject* Renderer::addLight(LightData data, Object* parent)
+{
+  LightObject* obj = new LightObject();
+  obj->setLightingData(data);
+
+  if (parent) { parent->getChildren_M().emplace_back(obj); }
+  else { this->rootObjects.emplace_back(obj); }
+
+  this->lights.emplace_back(LightData::CreateInterface(*obj));
+  this->regenerateLightUBO();
+
+  return obj;
+}
+
+void Renderer::regenerateLightUBO()
+{
   glBindBuffer(GL_UNIFORM_BUFFER, this->light_UBO);
   glBufferData(GL_UNIFORM_BUFFER, this->lights.size() * sizeof(LightData), this->lights.data(), GL_DYNAMIC_DRAW);
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, this->light_UBO);
-
-  return obj;
 }

@@ -4,9 +4,10 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+
 #include "Renderer/Renderer.h"
-#include "Object/MeshObject.h"
-#include "Object/GridObject.h"
+#include "Object/MeshObject/MeshObject.h"
+#include "Object/Gridobject/GridObject.h"
 #include "InputManager/InputManager.h"
 
 #include <chrono>
@@ -71,6 +72,8 @@ int main()
     // arm2.rotate(90.0f, glm::vec3(0.0f, 0.0f, 1.0f));
 
     renderer.setCameraPosCAR({8.0f, 3.0f, 0.0f});
+
+    // auto light1 = renderer.addLight({{0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f}});
     // renderer.addLight({0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f});
     // renderer.addLight({0.0f, 3.0f, -5.0f}, {0.341f, 0.333f, 0.996f});
 
@@ -105,7 +108,11 @@ int main()
         ImGui::GetWindowPos();
         ImGui::GetWindowSize();
 
-        if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen)) { Menu::ObjectSelector(); }
+        if (ImGui::CollapsingHeader("Objects", ImGuiTreeNodeFlags_DefaultOpen))
+        { 
+            Menu::ObjectSelector();
+            Menu::ObjectModifier();
+        }
 
         if (ImGui::CollapsingHeader("Settings")) {
             static ImVec4 color(0.0f, 0.0f, 0.2f, 0.0f);
@@ -124,7 +131,6 @@ int main()
                 if (ImGui::DragInt("Grid Size", &grid.getGridSize_M(), 1.0f, 1) ||
                     ImGui::DragInt("Grid Spacing", &grid.getGridSpacing_M(), 1.0f, 1) )
                 {
-                    std::cout << "update" << std::endl;
                     grid.generateGrid();
                 }
             }

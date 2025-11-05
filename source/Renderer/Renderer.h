@@ -4,16 +4,18 @@
 #include <vector>
 #include "../Camera/Camera.h"
 #include "../Object/Object.h"
-#include "../Object/MeshObject.h"
-#include "../Object/GridObject.h"
-#include "../Object/AxesObject.h"
-#include "../Object/LightObject.h"
+#include "../Object/AxesObject/AxesObject.h"
+#include "../Object/GridObject/GridObject.h"
+#include "../Object/LightObject/LightObject.h"
+#include "../Object/LightObject/LightData.h"
+#include "../Object/MeshObject/MeshObject.h"
 
 
 class Renderer
 {
 public:
   Renderer(GLFWwindow* window);
+  ~Renderer();
 
   void timeStep();
 
@@ -29,8 +31,9 @@ public:
   void setProjectionMatrix(const glm::mat4 p) { this->projectionMatrix = p; }
 
   std::vector<Object*> getRootObject() { return this->rootObjects; }
-  Object* addMesh(std::string filepath, Object* parent = NULL);
-  Object* addLight(Object* parent = NULL);
+  MeshObject* addMesh(std::string filepath, Object* parent = NULL);
+  LightObject* addLight(Object* parent = NULL);
+  LightObject* addLight(LightData data, Object* parent = NULL);
 
   bool& getRenderGrid_M() { return this->renderGrid; }
   bool& getRenderAxes_M() { return this->renderAxes; }
@@ -39,6 +42,8 @@ public:
   GridObject& getGridObject_M() { return this->gridObject; }
 
   GLFWwindow* getWindow() { return this->window; }
+
+  void regenerateLightUBO();
 
 private:
   double prevTime;
