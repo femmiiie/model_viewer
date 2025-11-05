@@ -1,11 +1,13 @@
 #include "MeshObject.h"
 
+#define TINYOBJLOADER_IMPLEMENTATION
+#include <tiny_obj_loader.h>
+
+#include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include "common/shader.hpp"
 
-#define TINYOBJLOADER_IMPLEMENTATION
-#include "../tiny_obj_loader.h"
 
 
 MeshObject::MeshObject(std::vector<LightData*>& scene_lights, std::string filepath) : Object(), scene_lights(scene_lights)
@@ -67,7 +69,13 @@ MeshObject::MeshObject(std::vector<LightData*>& scene_lights, std::string filepa
     glBindVertexArray(0);
 
     // Load and compile shaders
-    shaderProgram = LoadShaders("mesh.vs.glsl", "mesh.fs.glsl");
+    shaderProgram = ShaderLoader::Load(
+        "mesh.vs.glsl", 
+        NULL,
+        NULL,
+        NULL,
+        "mesh.fs.glsl"
+    );
 }
 
 MeshObject::~MeshObject() {}
@@ -76,8 +84,10 @@ void MeshObject::draw(const glm::mat4& view, const glm::mat4& projection, const 
 {
     glUseProgram(shaderProgram);
 
+    std::cout << glm::to_string(modelMatrix) << std::endl;
 
-    glm::mat4 M = transform * modelMatrix;
+    glm::mat4 M = modelMatrix;
+    // glm::mat4 M = transform * modelMatrix;
     GLuint MID = glGetUniformLocation(shaderProgram, "M");
     glUniformMatrix4fv(MID, 1, GL_FALSE, glm::value_ptr(M));
 

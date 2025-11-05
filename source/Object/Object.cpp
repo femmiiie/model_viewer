@@ -16,6 +16,20 @@ Object::~Object()
     glDeleteProgram(shaderProgram);
 }
 
+void Object::generateModelMatrix()
+{
+    glm::mat4 matrix(1);
+    matrix = glm::translate(matrix, this->position);
+
+    matrix = glm::rotate(matrix, this->rotation.x, {1, 0, 0});
+    matrix = glm::rotate(matrix, this->rotation.y, {0, 1, 0});
+    matrix = glm::rotate(matrix, this->rotation.z, {0, 0, 1});
+
+    matrix = glm::scale(matrix, this->scaling);
+
+    this->modelMatrix = matrix;
+}
+
 void Object::translate(const glm::vec3& translation) 
 {
     // Apply translation to the model matrix

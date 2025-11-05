@@ -1,7 +1,7 @@
 #ifndef AXESOBJECT_H
 #define AXESOBJECT_H
 
-#include "Object.h"
+#include "../Object.h"
 
 class AxesObject : public Object
 {
@@ -10,6 +10,7 @@ public:
   ~AxesObject() {}
 
   void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
+  void update() { generateModelMatrix(); }
 };
 
 #endif

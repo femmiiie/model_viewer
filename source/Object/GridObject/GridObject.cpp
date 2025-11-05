@@ -12,7 +12,13 @@ GridObject::GridObject() : Object()
     this->generateGrid();
 
     // Load and compile shaders
-    shaderProgram = LoadShaders("grid.vs.glsl", "grid.fs.glsl");
+    shaderProgram = ShaderLoader::Load(
+        "grid.vs.glsl",
+        NULL,
+        NULL,
+        NULL,
+        "grid.fs.glsl"
+    );
 }
 
 GridObject::~GridObject()

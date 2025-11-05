@@ -41,6 +41,14 @@ AxesObject::AxesObject() : Object()
     glBindVertexArray(0);
 
     // Load and compile shaders
+    shaderProgram = ShaderLoader::Load(
+        "axes.vs.glsl",
+        NULL,
+        NULL,
+        "axes.gs.glsl",
+        "grid.fs.glsl"
+    );
+    
     shaderProgram = LoadShadersGeneric("axes.vs.glsl", NULL, NULL, "axes.gs.glsl", "grid.fs.glsl");
     
 }

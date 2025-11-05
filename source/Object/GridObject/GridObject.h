@@ -1,7 +1,7 @@
 #ifndef GRIDOBJECT_H
 #define GRIDOBJECT_H
 
-#include "Object.h"
+#include "../Object.h"
 
 class GridObject : public Object
 {
@@ -10,6 +10,7 @@ public:
     ~GridObject();
 
     void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
+    void update() { generateModelMatrix(); }
 
     int& getGridSize_M() { return this->gridSize; }
     int& getGridSpacing_M() { return this->gridSpacing; }
