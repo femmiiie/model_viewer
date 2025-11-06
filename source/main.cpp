@@ -5,22 +5,28 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-#include "Renderer/Renderer.h"
-#include "Object/MeshObject/MeshObject.h"
-#include "Object/Gridobject/GridObject.h"
-#include "InputManager/InputManager.h"
-
-#include <chrono>
-#include <thread>
-
-#include "Menu/Menu.h"
-
 #include <nfd.h>
 #include <nfd_glfw3.h>
 
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
+
+#include "ShaderLoader/ShaderLoader.h"
+#include "Settings/Settings.h"
+#include "Menu/Menu.h"
+#include "InputManager/InputManager.h"
+
+#include "Renderer/Renderer.h"
+#include "Object/MeshObject/MeshObject.h"
+#include "Object/Gridobject/GridObject.h"
+
+
+#include <chrono>
+#include <thread>
+
+
+
 
 // Precompute commonly used PI values
 const float PI = glm::pi<float>();
@@ -38,6 +44,8 @@ GLFWwindow *window;
 int main()
 {
     if (initWindow() != 0) { return -1; }
+    Settings::Load("./mv_config.dat");
+
 
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
@@ -73,7 +81,7 @@ int main()
 
     renderer.setCameraPosCAR({8.0f, 3.0f, 0.0f});
 
-    // auto light1 = renderer.addLight({{0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f}});
+    // auto light1 = renderer.addLight({{0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f},});
     // renderer.addLight({0.0f, 3.0f, 5.0f}, {0.7f, 0.443f, 0.704f});
     // renderer.addLight({0.0f, 3.0f, -5.0f}, {0.341f, 0.333f, 0.996f});
 
@@ -122,10 +130,8 @@ int main()
                 glClearColor(color.x, color.y, color.z, color.w);
             }
 
-            static bool& show_grid = renderer.getRenderGrid_M();
-
-            ImGui::Checkbox("Show grid", &show_grid);
-            if (show_grid)
+            ImGui::Checkbox(Settings::ShowGrid.name, &Settings::ShowGrid.active);
+            if (Settings::ShowGrid.active)
             {
                 GridObject& grid = renderer.getGridObject_M();
                 if (ImGui::DragInt("Grid Size", &grid.getGridSize_M(), 1.0f, 1) ||
@@ -136,7 +142,8 @@ int main()
             }
 
 
-            ImGui::Checkbox("Show axes", &renderer.getRenderAxes_M());
+            ImGui::Checkbox(Settings::ShowAxes.name, &Settings::ShowAxes.active);
+            ImGui::Checkbox(Settings::ShowLightPoints.name, &Settings::ShowLightPoints.active);
 
             glm::vec3 pos = renderer.getCamera()->getPosCAR();
             float vec[3] = {pos.x, pos.y, pos.z};
@@ -163,6 +170,7 @@ int main()
     NFD_Quit();
 
     glfwTerminate();
+    Settings::Save("./mv_config.dat");
     return 0;
 }
 
