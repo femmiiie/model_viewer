@@ -14,20 +14,22 @@ DONE set obj position,rotation,scale
 DONE MOVE CUSTOM SHADER LOADER TO SOMEWHERE NEW
 DONE convert current settings to use class
 DONE saving/loading settings
+DONE renaming objects
+DONE folders
+DONE deleting objects
+DONE deleting lights
+DONE deleting Mesh with children moves children into parent obj
 
+fix object movement hierarchy
 
-renaming objects
-deleting objects
-deleting lights
+supporting different light types
 
-folders to store children without needing model? impl as FolderObject
-deleting Mesh with children moves children into parent obj
+set all menus to use menu class
 
 set projection type
 set shader for object
 custom shaders per object
 
 global flat shading toggleable
-
 
 go through and make the coding style consistent

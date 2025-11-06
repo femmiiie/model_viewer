@@ -32,14 +32,21 @@ public:
 
   std::vector<Object*>& getChildren_M() { return this->children; }
 
-  std::string getName() { return this->name; }
+  Object* getParent() { return this->parent; }
+  void setParent(Object* parent) { this->parent = parent;}
+
+  std::string& getName() { return this->name; }
   const char* getCName() { return this->name.c_str(); }
 
   glm::vec3& getPosition_M() { return this->position; }  
   glm::vec3& getRotation_M() { return this->rotation; }
   glm::vec3& getScaling_M() { return this->scaling; }
+  int getId() { return this->id; }
+
+  bool operator==(Object& rhs) { return this->id == rhs.getId(); }
 
 protected:
+  int id;
   GLuint VAO, VBO, EBO;
   GLuint shaderProgram;
 

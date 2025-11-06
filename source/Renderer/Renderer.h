@@ -11,6 +11,7 @@
 #include "../Object/LightObject/LightObject.h"
 #include "../Object/LightObject/LightData.h"
 #include "../Object/MeshObject/MeshObject.h"
+#include "../Object/FolderObject/FolderObject.h"
 
 
 class Renderer
@@ -32,12 +33,15 @@ public:
   const glm::mat4 getProjectionMatrix() { return this->projectionMatrix; }
   void setProjectionMatrix(const glm::mat4 p) { this->projectionMatrix = p; }
 
-  std::vector<Object*> getRootObject() { return this->rootObjects; }
-  MeshObject* addMesh(std::string filepath, Object* parent = NULL);
+  std::vector<Object*>& getRootObject() { return this->rootObjects; }
+  FolderObject* addFolder(Object* parent = NULL);
   LightObject* addLight(Object* parent = NULL);
   LightObject* addLight(LightData data, Object* parent = NULL);
+  MeshObject* addMesh(std::string filepath, Object* parent = NULL);
 
   void removeNode(Object* object);
+
+  std::vector<LightObject*>& getLights() { return this->lights; }
 
   GridObject& getGridObject_M() { return this->gridObject; }
 

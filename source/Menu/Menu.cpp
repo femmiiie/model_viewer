@@ -28,10 +28,22 @@ void Menu::RenderNode(Object* node, ImGuiTreeNodeFlags node_flags)
 {
 	std::vector<Object*>& children = node->getChildren_M();
 	if (children.empty()) { node_flags |= ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen; }
-  if (Menu::selected_node == node) { node_flags |= ImGuiTreeNodeFlags_Selected; }
+  if (Menu::selected_node == node){ node_flags |= ImGuiTreeNodeFlags_Selected; }
 
 	bool opened = ImGui::TreeNodeEx((void*)node, node_flags, node->getCName());
 	if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen()) { Menu::selected_node = node; }
+
+  if (ImGui::BeginPopupContextItem())
+  {
+    ImGui::InputText("", node->getName().data(), 32); 
+    if (ImGui::MenuItem("Delete", "Ctrl + D"))
+    {
+      if (Menu::selected_node == node) { Menu::selected_node = nullptr; }
+      renderer->removeNode(node);
+    }
+    
+    ImGui::EndPopup();
+  }
 
 	if (opened && !(node_flags & ImGuiTreeNodeFlags_Leaf))
 	{
@@ -54,6 +66,7 @@ void Menu::ObjectSelector()
     }
   
     if (ImGui::Selectable("Light")) { renderer->addLight(selected_node); }
+    if (ImGui::Selectable("Folder")) { renderer->addFolder(selected_node); }
     ImGui::EndPopup();
   }
 
