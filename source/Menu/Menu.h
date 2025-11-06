@@ -4,6 +4,8 @@
 #include <nfd.h>
 #include <nfd_glfw3.h>
 
+#include <functional>
+
 #include "imgui.h"
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
@@ -14,6 +16,8 @@ class Menu
   static void Init(Renderer* renderer);
   static void RenderNode(Object* node, ImGuiTreeNodeFlags node_flags);
   static void ObjectSelector();
+  static void ObjectModifier();
+  static void MultiSelector(const char* selector_label, std::vector<const char*> labels, std::vector<float*> variables, float size);
 
   static nfdu8char_t* GetFile();
 
