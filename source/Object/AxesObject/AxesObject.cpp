@@ -1,5 +1,4 @@
 #include "AxesObject.h"
-#include "common/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
@@ -47,10 +46,7 @@ AxesObject::AxesObject() : Object()
         NULL,
         "axes.gs.glsl",
         "grid.fs.glsl"
-    );
-    
-    shaderProgram = LoadShadersGeneric("axes.vs.glsl", NULL, NULL, "axes.gs.glsl", "grid.fs.glsl");
-    
+    );    
 }
 
 

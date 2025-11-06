@@ -3,7 +3,6 @@
 
 #include "../Object.h"
 
-#include "common/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
@@ -40,7 +39,7 @@ private:
   float power    = 30.0f;
   float diffuse  = 1.0f;
   float specular = 1.0f;
-  float ambient  = 1.0f;
+  float ambient  = 0.1f;
 
   friend struct LightData;
 };

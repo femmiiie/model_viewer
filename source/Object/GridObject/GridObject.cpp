@@ -1,5 +1,4 @@
 #include "GridObject.h"
-#include "common/shader.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
 #include <vector>
