@@ -11,24 +11,12 @@
 //Strictly an interface class to allow lights in shaders
 struct LightData
 {
-  static LightData* CreateInterface(LightObject& obj)
-  {
-    return new LightData({
-      &obj.position,
-      &obj.color,
-      &obj.power,
-      &obj.diffuse,
-      &obj.specular,
-      &obj.ambient
-    });
-}
-
-  glm::vec3* lightPosition;
-  glm::vec4* lightColor;
-  float* lightPower;
-  float* lightDiffuse;
-  float* lightSpecular;
-  float* lightAmbient;
+  glm::vec4 position;
+  glm::vec4 color;
+  float power;
+  float diffuse;
+  float specular;
+  float ambient;
 };
 
 #endif

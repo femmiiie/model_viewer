@@ -34,24 +34,24 @@ LightObject::LightObject() : Object()
 
 void LightObject::draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera) 
 {
-    glUseProgram(shaderProgram);
- 
-    std::cout << glm::to_string(modelMatrix) << std::endl;
+  glUseProgram(shaderProgram);
 
-    glm::mat4 MVP = projection * view * modelMatrix;
-    GLuint matrixID = glGetUniformLocation(shaderProgram, "MVP");
-    glUniformMatrix4fv(matrixID, 1, GL_FALSE, glm::value_ptr(MVP));
+  if (!Settings::ShowLightPoints.active) { return; }
 
-    glBindVertexArray(VAO);
-    glPointSize(10 + this->power/3); //TODO: CHANGE TO CUSTOM SETTING
+  glm::mat4 MVP = projection * view * modelMatrix;
+  GLuint matrixID = glGetUniformLocation(shaderProgram, "MVP");
+  glUniformMatrix4fv(matrixID, 1, GL_FALSE, glm::value_ptr(MVP));
 
-    glDrawArrays(GL_POINTS, 0, 1);
-    glBindVertexArray(0);
+  glBindVertexArray(VAO);
+  glPointSize(10 + this->power/3); //TODO: CHANGE TO CUSTOM SETTING
 
-    for (Object* child : this->children)
-    {
-        child->draw(view, projection, transform * modelMatrix, camera);
-    }
+  glDrawArrays(GL_POINTS, 0, 1);
+  glBindVertexArray(0);
+
+  for (Object* child : this->children)
+  {
+    child->draw(view, projection, transform * modelMatrix, camera);
+  }
 }
 
 
@@ -65,9 +65,6 @@ void LightObject::update()
   std::vector<GLfloat> vertex = {position.x, position.y, position.z, color.x, color.y, color.z};
   glBufferData(GL_ARRAY_BUFFER, vertex.size() * sizeof(GLfloat), vertex.data(), GL_STATIC_DRAW);
   glBindVertexArray(0);
-
-  std::cout << "updated" << std::endl;
-
 }
 
 

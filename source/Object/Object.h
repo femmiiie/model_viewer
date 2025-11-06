@@ -2,6 +2,7 @@
 #define OBJECT_H
 
 #include "../ShaderLoader/ShaderLoader.h"
+#include "../Settings/Settings.h"
 
 #include <string>
 #include <GL/glew.h>
@@ -44,12 +45,13 @@ protected:
 
   glm::vec3 position = glm::vec3(0.0f);
   glm::vec3 rotation = glm::vec3(0.0f);
-  glm::vec3 scaling  = glm::vec3(0.0f);
+  glm::vec3 scaling  = glm::vec3(1.0f);
 
   glm::mat4 modelMatrix = glm::mat4(1.0f);
   GLsizei numIndices;
 
   std::string name = "New Object";
+  Object* parent = NULL;
   std::vector<Object*> children;
 };
 

@@ -6,14 +6,11 @@
 #include <glm/gtx/string_cast.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <iostream>
-#include "common/shader.hpp"
 
 
-
-MeshObject::MeshObject(std::vector<LightData*>& scene_lights, std::string filepath) : Object(), scene_lights(scene_lights)
+MeshObject::MeshObject(std::vector<LightObject*>& scene_lights, std::string filepath) : Object(), scene_lights(scene_lights)
 { 
     glBindVertexArray(VAO);
-
     tinyobj::ObjReader reader;
 
     if (!reader.ParseFromFile(filepath)) {
@@ -84,7 +81,6 @@ void MeshObject::draw(const glm::mat4& view, const glm::mat4& projection, const 
 {
     glUseProgram(shaderProgram);
 
-    std::cout << glm::to_string(modelMatrix) << std::endl;
 
     glm::mat4 M = modelMatrix;
     // glm::mat4 M = transform * modelMatrix;

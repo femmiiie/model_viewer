@@ -9,19 +9,25 @@ DONE (multiple objs?)
 DONE add new lights
 DONE visualize lights as points
 DONE make lights childable to objects?
+DONE set light position,luminance
+DONE set obj position,rotation,scale
+DONE MOVE CUSTOM SHADER LOADER TO SOMEWHERE NEW
+DONE convert current settings to use class
+DONE saving/loading settings
 
-set obj position,rotation,scale
-set light position,luminance
 
-removeable objects
-removeable lights
+renaming objects
+deleting objects
+deleting lights
+
+folders to store children without needing model? impl as FolderObject
+deleting Mesh with children moves children into parent obj
 
 set projection type
 set shader for object
 custom shaders per object
 
-MOVE CUSTOM SHADER LOADER TO SOMEWHERE NEW
-
 global flat shading toggleable
 
-saving/loading settings
+
+go through and make the coding style consistent

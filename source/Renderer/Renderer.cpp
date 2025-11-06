@@ -11,8 +11,6 @@ Renderer::Renderer(GLFWwindow* window) : gridObject(), axesObject()
   this->frames = 0;
 
   this->window = window;
-  this->renderGrid = false;
-  this->renderAxes = false;
 
   this->camera.setScrollScaling(0.5);
 
@@ -21,10 +19,7 @@ Renderer::Renderer(GLFWwindow* window) : gridObject(), axesObject()
 
 Renderer::~Renderer()
 {
-  for (LightData* data : this->lights)
-  {
-    delete data;
-  }
+
 }
 
 void Renderer::timeStep()
@@ -48,8 +43,8 @@ void Renderer::render()
   glm::mat4 viewMatrix = this->camera.getViewMatrix();
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  if (this->renderGrid) { this->gridObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR()); }
-  if (this->renderAxes) { this->axesObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR()); }
+  if (Settings::ShowGrid.active) { this->gridObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR()); }
+  if (Settings::ShowAxes.active) { this->axesObject.draw(viewMatrix, projectionMatrix, glm::mat4(1.0f), this->camera.getPosCAR()); }
 
   for (Object* object : this->rootObjects)
   {
@@ -84,7 +79,7 @@ LightObject* Renderer::addLight(Object* parent)
   if (parent) { parent->getChildren_M().emplace_back(obj); }
   else { this->rootObjects.emplace_back(obj); }
 
-  this->lights.emplace_back(LightData::CreateInterface(*obj));
+  this->lights.emplace_back(obj);
   this->regenerateLightUBO();
 
   return obj;
@@ -98,7 +93,7 @@ LightObject* Renderer::addLight(LightData data, Object* parent)
   if (parent) { parent->getChildren_M().emplace_back(obj); }
   else { this->rootObjects.emplace_back(obj); }
 
-  this->lights.emplace_back(LightData::CreateInterface(*obj));
+  this->lights.emplace_back(obj);
   this->regenerateLightUBO();
 
   return obj;
@@ -106,7 +101,25 @@ LightObject* Renderer::addLight(LightData data, Object* parent)
 
 void Renderer::regenerateLightUBO()
 {
+  std::vector<LightData> lightData;
+  lightData.reserve(this->lights.size());
+
+  for (LightObject* light : this->lights)
+  {
+    LightData data = {  
+      .position = glm::vec4(light->getPosition_M(), 0),
+      .color    = light->getColor(),
+      .power    = light->getPower(),
+      .diffuse  = light->getDiffuse(),
+      .specular = light->getSpecular(),
+      .ambient  = light->getAmbient()
+    };
+
+    lightData.emplace_back(data);
+  }
+
   glBindBuffer(GL_UNIFORM_BUFFER, this->light_UBO);
-  glBufferData(GL_UNIFORM_BUFFER, this->lights.size() * sizeof(LightData), this->lights.data(), GL_DYNAMIC_DRAW);
+  glBufferData(GL_UNIFORM_BUFFER, lightData.size() * sizeof(LightData), lightData.data(), GL_DYNAMIC_DRAW);
   glBindBufferBase(GL_UNIFORM_BUFFER, 0, this->light_UBO);
+  glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
