@@ -1,4 +1,5 @@
 #include "LightObject.h"
+#include "../../Settings/Settings.h"
 
 #include <glm/gtx/string_cast.hpp>
 

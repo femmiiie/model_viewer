@@ -32,14 +32,21 @@ public:
   float& getDiffuse() { return diffuse; }
   float& getSpecular() { return specular; }
   float& getAmbient() { return ambient; }
+  int& getType() { return type; }
+  float& getCutoff() { return cutoff; }
+  glm::vec3& getDirection() { return direction; }
 
 private:
   glm::vec4 color = glm::vec4(1.0f);
 
-  float power    = 30.0f;
+  float power    = 1.0f;
   float diffuse  = 1.0f;
   float specular = 1.0f;
   float ambient  = 0.1f;
+
+  int type            = 0;
+  float cutoff        = glm::radians(0.0f);
+  glm::vec3 direction = glm::vec3(0.0f);
 
   friend struct LightData;
 };
