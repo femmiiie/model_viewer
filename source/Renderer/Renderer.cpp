@@ -2,6 +2,7 @@
 #include "imgui.h"
 #include "imgui_impl_opengl3.h"
 
+#include "../Settings/Settings.h"
 #include <iostream>
 
 Renderer::Renderer(GLFWwindow* window) : gridObject(), axesObject()
@@ -66,6 +67,12 @@ void Renderer::display()
 MeshObject* Renderer::addMesh(std::string filepath, Object* parent)
 {
   MeshObject* obj = new MeshObject(this->lights, filepath);
+  if (!obj->isValid())
+  {
+    delete obj;
+    return nullptr;
+  }
+
   if (parent) 
   {
     obj->setParent(parent);
@@ -193,12 +200,15 @@ void Renderer::regenerateLightUBO()
   for (LightObject* light : this->lights)
   {
     LightData data = {  
-      .position = glm::vec4(light->getPosition_M(), 0),
-      .color    = light->getColor(),
-      .power    = light->getPower(),
-      .diffuse  = light->getDiffuse(),
-      .specular = light->getSpecular(),
-      .ambient  = light->getAmbient()
+      .position  = glm::vec4(light->getPosition_M(), 0),
+      .color     = light->getColor(),
+      .power     = light->getPower(),
+      .diffuse   = light->getDiffuse(),
+      .specular  = light->getSpecular(),
+      .ambient   = light->getAmbient(),
+      .type      = light->getType(),
+      .cutoff    = light->getCutoff(),
+      .direction = light->getDirection()
     };
 
     lightData.emplace_back(data);

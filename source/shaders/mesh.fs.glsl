@@ -2,6 +2,8 @@
 
 in vec3 position;
 in vec3 normal;
+in vec3 color;
+in vec2 tex;
 in vec3 eyevector;
 
 struct LightData
@@ -26,15 +28,15 @@ uniform int num_lights;
 uniform mat4 V;
 uniform vec3 camerapos;
 
+// uniform sampler2D texsampler;
+
 // Output color
-out vec4 color;
+out vec4 out_color;
 
 vec3 comp_light(LightData light, vec3 lightdir) {
-    vec3 mat_color = vec3(0.9, 0.9, 0.9);
-    // vec3 mat_color = normal;
-    vec3 diff_color = mat_color;
-    vec3 amb_color = mat_color;
-    vec3 spec_color = mat_color * 0.1;
+    vec3 diff_color = color;
+    vec3 amb_color = color;
+    vec3 spec_color = color * 0.1;
 
     float dist = length(light.position.xyz - position);
 
@@ -77,6 +79,6 @@ void main() {
         sum_of_lights += comp_light(lights[i], lightDirection);
     }
 
-    color = vec4(clamp(sum_of_lights,0, 1), 1.0);
+    out_color = vec4(clamp(sum_of_lights,0, 1), 1.0);
 }
 

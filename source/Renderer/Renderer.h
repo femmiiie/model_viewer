@@ -2,71 +2,69 @@
 #define RENDERER_H
 
 #include <vector>
-#include "../Settings/Settings.h"
 
 #include "../Camera/Camera.h"
-#include "../Object/Object.h"
 #include "../Object/AxesObject/AxesObject.h"
-#include "../Object/GridObject/GridObject.h"
-#include "../Object/LightObject/LightObject.h"
-#include "../Object/LightObject/LightData.h"
-#include "../Object/MeshObject/MeshObject.h"
 #include "../Object/FolderObject/FolderObject.h"
-
+#include "../Object/GridObject/GridObject.h"
+#include "../Object/LightObject/LightData.h"
+#include "../Object/LightObject/LightObject.h"
+#include "../Object/MeshObject/MeshObject.h"
+#include "../Object/Object.h"
 
 class Renderer
 {
 public:
-  Renderer(GLFWwindow* window);
-  ~Renderer();
+	Renderer(GLFWwindow* window);
+	~Renderer();
 
-  void timeStep();
+	void timeStep();
 
-  void render();
-  void display();
+	void render();
+	void display();
 
-  Camera* getCamera() { return &this->camera; }
+	Camera* getCamera() { return &this->camera; }
 
-  void setCameraPosSPH(glm::vec3 pos) { this->camera.setPosSPH(pos); }
-  void setCameraPosCAR(glm::vec3 pos) { this->camera.setPosCAR(pos); }
+	void setCameraPosSPH(glm::vec3 pos) { this->camera.setPosSPH(pos); }
+	void setCameraPosCAR(glm::vec3 pos) { this->camera.setPosCAR(pos); }
 
-  const glm::mat4 getProjectionMatrix() { return this->projectionMatrix; }
-  void setProjectionMatrix(const glm::mat4 p) { this->projectionMatrix = p; }
+	const glm::mat4 getProjectionMatrix() { return this->projectionMatrix; }
+	void setProjectionMatrix(const glm::mat4 p) { this->projectionMatrix = p; }
 
-  std::vector<Object*>& getRootObject() { return this->rootObjects; }
-  FolderObject* addFolder(Object* parent = NULL);
-  LightObject* addLight(Object* parent = NULL);
-  LightObject* addLight(LightData data, Object* parent = NULL);
-  MeshObject* addMesh(std::string filepath, Object* parent = NULL);
+	std::vector<Object*>& getRootObject() { return this->rootObjects; }
+	FolderObject* addFolder(Object* parent = NULL);
+	LightObject* addLight(Object* parent = NULL);
+	LightObject* addLight(LightData data, Object* parent = NULL);
+	MeshObject* addMesh(std::string filepath, Object* parent = NULL);
 
-  void removeNode(Object* object);
+	void removeNode(Object* object);
 
-  std::vector<LightObject*>& getLights() { return this->lights; }
+	std::vector<LightObject*>& getLights() { return this->lights; }
 
-  GridObject& getGridObject_M() { return this->gridObject; }
+	GridObject& getGridObject_M() { return this->gridObject; }
 
-  GLFWwindow* getWindow() { return this->window; }
+	GLFWwindow* getWindow() { return this->window; }
 
-  void regenerateLightUBO();
+	void regenerateLightUBO();
 
 private:
-  double prevTime;
-  double currTime;
-  double sinceLast;
-  double frames;
-  double delta;
+	double prevTime;
+	double currTime;
+	double sinceLast;
+	double frames;
+	double delta;
 
-  GLFWwindow* window;
+	GLFWwindow* window;
 
-  Camera camera;
-  
-  glm::mat4 projectionMatrix;
+	Camera camera;
 
-  GridObject gridObject;
-  AxesObject axesObject;
-  std::vector<Object*> rootObjects;
-  std::vector<LightObject*> lights; //TODO: Implement removing lightsobjs to remove this light
-  GLuint light_UBO;
+	glm::mat4 projectionMatrix;
+
+	GridObject gridObject;
+	AxesObject axesObject;
+	std::vector<Object*> rootObjects;
+	std::vector<LightObject*> lights; // TODO: Implement removing lightsobjs to remove this light
+	GLuint light_UBO;
 };
 
 #endif
