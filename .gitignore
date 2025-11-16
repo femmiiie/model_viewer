@@ -12,5 +12,9 @@ OpenGL-tutorial_v*
 **.mtl
 .DS_Store
 
+.cache
+.clangd
+.clang-format
+
 source/*.ini
 .vscode/*

@@ -1,7 +1,7 @@
 # CMake entry point
 cmake_minimum_required (VERSION 4.0)
 project (model_viewer)
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 23)
 
 find_package(OpenGL REQUIRED)
 
