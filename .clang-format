@@ -1,0 +1,16 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+TabWidth: 2
+UseTab: ForIndentation
+BreakBeforeBraces: Allman
+AllowShortFunctionsOnASingleLine: InlineOnly
+AllowShortIfStatementsOnASingleLine: AllIfsAndElse
+AllowShortLoopsOnASingleLine: True
+AllowShortEnumsOnASingleLine: True
+AlignArrayOfStructures: Left
+AlignConsecutiveAssignments: Consecutive
+ColumnLimit: 100
+PointerAlignment: Left
+
+BraceWrapping:
+  BeforeLambdaBody: false
