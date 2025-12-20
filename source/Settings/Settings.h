@@ -21,13 +21,19 @@ class Settings
     bool active;
   };
 
+  struct EnumSetting
+  {
+    const char* name;
+    int value = 0;
+  };
+
   struct ValSetting
   {
-    std::string name;
+    const char* name;
     float value = 0;
   };
 
-  using Setting = std::variant<BoolSetting*, ValSetting*>;
+  using Setting = std::variant<BoolSetting*, ValSetting*, EnumSetting*>;
 
   struct SettingRef
   {
@@ -35,14 +41,19 @@ class Settings
     Setting setting; 
   };
 
+  enum ProjectionType { PERSPEC, ORTHO };
+
   static inline BoolSetting ShowGrid = {"Show Grid", false};
   static inline BoolSetting ShowAxes = {"Show Axes", false};
   static inline BoolSetting ShowLightPoints = {"Display Lights as Points", false};
+  static inline EnumSetting Projection = {"Projection Type", PERSPEC};
+
 
   static inline std::vector<SettingRef> Identifiers = {
     {"ShowGrid", &ShowGrid},
     {"ShowAxes", &ShowAxes},
     {"ShowLightPoints", &ShowLightPoints},
+    {"Projection", &Projection},
   };
 };
 
