@@ -44,7 +44,7 @@ AxesObject::AxesObject() : Object()
         "axes.vs.glsl",
         NULL,
         NULL,
-        "axes.gs.glsl",
+        NULL,
         "grid.fs.glsl"
     );    
 }

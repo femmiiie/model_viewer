@@ -6,7 +6,7 @@
 class GridObject : public Object
 {
 public:
-    GridObject();
+    GridObject(bool withAxes);
     ~GridObject();
 
     void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
@@ -15,7 +15,7 @@ public:
     int& getGridSize_M() { return this->gridSize; }
     int& getGridSpacing_M() { return this->gridSpacing; }
     
-    void generateGrid();
+    void generateGrid(bool withAxes);
 
 private:
     std::vector<GLfloat> vertices;

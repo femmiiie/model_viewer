@@ -18,9 +18,8 @@ public:
 	Renderer(GLFWwindow* window);
 	~Renderer();
 
-	void timeStep();
-
 	void render();
+	void update();
 	void display();
 
 	Camera* getCamera() { return &this->camera; }

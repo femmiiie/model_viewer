@@ -4,11 +4,11 @@
 #include <vector>
 #include <numeric>
 
-GridObject::GridObject() : Object()
+GridObject::GridObject(bool withAxes) : Object()
 {   
     this->gridSize = 10;
     this->gridSpacing = 1;
-    this->generateGrid();
+    this->generateGrid(withAxes);
 
     // Load and compile shaders
     shaderProgram = ShaderLoader::Load(
@@ -43,7 +43,7 @@ void GridObject::draw(const glm::mat4& view, const glm::mat4& projection, const 
 }
 
 
-void GridObject::generateGrid()
+void GridObject::generateGrid(bool withAxes)
 {
     if (this->gridSize < 1) { this->gridSize = 1; }
     if (this->gridSpacing < 1) { this->gridSpacing = 1; }
@@ -57,14 +57,16 @@ void GridObject::generateGrid()
 
     for (int i = -halfGrid; i <= halfGrid; i += gridSpacing)
     {
+        if (i == 0 && !withAxes) { continue; }
+
         this->vertices.insert(this->vertices.end(), {
-            (float)i, -0.001f, -halfGrid, 1.0f, 1.0f, 1.0f,
-            (float)i, -0.001f,  halfGrid, 1.0f, 1.0f, 1.0f
+            (float)i, 0.0f, -halfGrid, 1.0f, 1.0f, 1.0f,
+            (float)i, 0.0f,  halfGrid, 1.0f, 1.0f, 1.0f
         });
 
         this->vertices.insert(this->vertices.end(), {
-            -halfGrid, 0.001f, (float)i, 1.0f, 1.0f, 1.0f,
-             halfGrid, 0.001f, (float)i, 1.0f, 1.0f, 1.0f
+            -halfGrid, 0.0f, (float)i, 1.0f, 1.0f, 1.0f,
+             halfGrid, 0.0f, (float)i, 1.0f, 1.0f, 1.0f
         });
     }
 
