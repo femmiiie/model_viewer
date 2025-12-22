@@ -241,18 +241,23 @@ void Menu::Settings()
 		glClearColor(color.x, color.y, color.z, color.w);
 	}
 
+	GridObject& grid = Menu::renderer->getGridObject_M();
+
 	ImGui::Checkbox(Settings::ShowGrid.name, &Settings::ShowGrid.active);
 	if (Settings::ShowGrid.active)
 	{
-		GridObject& grid = Menu::renderer->getGridObject_M();
 		if (ImGui::DragInt("Grid Size", &grid.getGridSize_M(), 1.0f, 1) ||
 		    ImGui::DragInt("Grid Spacing", &grid.getGridSpacing_M(), 1.0f, 1))
 		{
-			grid.generateGrid(Settings::ShowAxes.active);
+			grid.update();
 		}
 	}
 
-	ImGui::Checkbox(Settings::ShowAxes.name, &Settings::ShowAxes.active);
+	if (ImGui::Checkbox(Settings::ShowAxes.name, &Settings::ShowAxes.active))
+	{
+		grid.update();
+	}
+
 	ImGui::Checkbox(Settings::ShowLightPoints.name, &Settings::ShowLightPoints.active);
 
 	Camera* camera = Menu::renderer->getCamera();
@@ -266,7 +271,7 @@ void Menu::Settings()
 	}
 
 	Settings::ProjectionType& type = camera->getProjectionType_M();
-	const char* types[] = {"Perspective", "Orthographic"};
+	const char* types[]            = {"Perspective", "Orthographic"};
 	if (ImGui::BeginCombo("Light Type", types[type]))
 	{
 		for (int i = 0; i < 2; i++)
@@ -288,9 +293,8 @@ void Menu::Settings()
 	if (ImGui::DragFloat("Camera FOV", &camera->getFOV_M()) ||
 	    ImGui::DragFloat("Aspect Ratio", &camera->getAspect_M()) ||
 	    ImGui::DragFloat("Near Clip", &camera->getNearClip_M()) ||
-	    ImGui::DragFloat("Far Clip", &camera->getFarClip_M()) )
+	    ImGui::DragFloat("Far Clip", &camera->getFarClip_M()))
 	{
 		camera->deferUpdate();
 	}
-
 }

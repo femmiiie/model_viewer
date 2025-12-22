@@ -5,7 +5,7 @@
 #include "../Settings/Settings.h"
 #include <iostream>
 
-Renderer::Renderer(GLFWwindow* window) : gridObject(Settings::ShowAxes.active), axesObject()
+Renderer::Renderer(GLFWwindow* window) : gridObject(), axesObject()
 {
 	this->prevTime  = glfwGetTime();
 	this->sinceLast = 0;
@@ -36,7 +36,10 @@ void Renderer::update()
 		sinceLast = 0;
 	}
 
-	if (camera.requiresUpdate()) { camera.update(); }
+	if (camera.requiresUpdate())
+	{
+		camera.update();
+	}
 }
 
 void Renderer::render()
