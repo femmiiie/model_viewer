@@ -4,6 +4,8 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
+#include "../Settings/Settings.h"
+
 class Camera
 {
 public:
@@ -22,12 +24,23 @@ public:
   void setViewDirection(glm::vec3 dir) { this->eyeVector = dir; }
   glm::vec3 getViewDirection() { return this->eyeVector; }
 
+  Settings::ProjectionType& getProjectionType_M() { return this->type; }
+
+  float& getFOV_M() { return this->fov; }
+  float& getAspect_M() { return this->aspectRatio; }
+  float& getNearClip_M() { return this->nearClip; }
+  float& getFarClip_M() { return this->farClip; }
+
+  void deferUpdate() { this->needsUpdate = true; }
+  bool requiresUpdate() { return this->needsUpdate; }
+  void update();
+
   void convertSPHtoCAR();
   void convertCARtoSPH();
 
 private:
   float scrollScaling;
-
+  bool needsUpdate;
 
   glm::vec3 positionSPH;
   glm::vec3 positionCAR;
@@ -39,6 +52,12 @@ private:
 
 
   void setViewMatrix();
+
+  Settings::ProjectionType type = Settings::PERSPEC;
+  float aspectRatio = 16.0f / 9.0f;
+  float fov = 45.0f;
+  float nearClip = 0.1f;
+  float farClip = 100.0f;
 };
 
 #endif

@@ -50,3 +50,27 @@ void Camera::setViewMatrix()
     glm::vec3(0, 1, 0)
   );
 }
+
+
+void Camera::update()
+{
+  if (this->type == Settings::PERSPEC)
+  {
+    this->viewMatrix = glm::perspective(
+      this->fov,
+      this->aspectRatio,
+      this->nearClip,
+      this->farClip
+    );
+  }
+
+  else
+  { //FIX THIS
+    this->viewMatrix = glm::ortho(
+      0, 0, 0, 0
+    );
+  }
+
+  this->needsUpdate = false;
+}
+
