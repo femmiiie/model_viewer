@@ -1,28 +1,34 @@
 #ifndef GRIDOBJECT_H
 #define GRIDOBJECT_H
 
+#include "../../Settings/Settings.h"
 #include "../Object.h"
 
 class GridObject : public Object
 {
 public:
-    GridObject(bool withAxes);
-    ~GridObject();
+	GridObject();
+	~GridObject();
 
-    void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform, const glm::vec3& camera);
-    void update() { generateModelMatrix(); }
+	void draw(const glm::mat4& view, const glm::mat4& projection, const glm::mat4& transform,
+	          const glm::vec3& camera);
+	void update()
+	{
+		generateModelMatrix();
+		generateGrid();
+	}
 
-    int& getGridSize_M() { return this->gridSize; }
-    int& getGridSpacing_M() { return this->gridSpacing; }
-    
-    void generateGrid(bool withAxes);
+	int& getGridSize_M() { return this->gridSize; }
+	int& getGridSpacing_M() { return this->gridSpacing; }
+
+	void generateGrid();
 
 private:
-    std::vector<GLfloat> vertices;
-    std::vector<GLuint> indices;
+	std::vector<GLfloat> vertices;
+	std::vector<GLuint> indices;
 
-    int gridSize;
-    int gridSpacing;
+	int gridSize;
+	int gridSpacing;
 };
 
 #endif
